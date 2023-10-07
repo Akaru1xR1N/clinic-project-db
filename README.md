@@ -1,4 +1,5 @@
 # The final project database
+![finally](https://github.com/Akaru1xR1N/README.img/blob/master/project%20db%20init.png "finally")
 
 This branch is the part of backend that includes
 
@@ -17,8 +18,34 @@ This branch is the part of backend that includes
 &nbsp;&nbsp;|--*server.js*<br>
 
 
+## Setup
+![setup](https://github.com/Akaru1xR1N/README.img/blob/master/setup.png "setup")
+```sh
+pnpm init
+pnpm install crypto express mysql2 mysqldump
+```
+
+## Setup detail
+![setup detail](https://github.com/Akaru1xR1N/README.img/blob/master/setupdetail.png "setup detail")
+* `crypto` - encrypt data (for encrypt password)
+* `express` - web app framework
+* `mysql2` - connect to mysql server
+* `mysqldump` - dump database to a file
+
+## API detail
+![api detail](https://github.com/Akaru1xR1N/README.img/blob/master/apidetail.png "api detail")
+```diff
++ IP
+ip: localhost or https://www.pn-nurse.nu.ac.th/api/projectdb2023/
+
++ PORT
+port: 3010 or https://www.pn-nurse.nu.ac.th/api/projectdb2023/
+
+! For more information about API go to root path
+```
 
 ## File detail
+![file detail](https://github.com/Akaru1xR1N/README.img/blob/master/filedetail.png "file detail")
 ##### `variable.js`
 ```js
  module.exports={
