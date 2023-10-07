@@ -32,6 +32,15 @@ pnpm install crypto express mysql2 mysqldump
 * `mysql2` - connect to mysql server
 * `mysqldump` - dump database to a file
 
+## Clone project
+![setup detail](https://github.com/Akaru1xR1N/README.img/blob/master/clone.png "setup detail")
+```sh
+git clone https://github.com/Akaru1xR1N/clinic-project-db.git -b backend
+cd ./clinic-project-db
+pnpm i
+pm2 start server.js --name clinic_projectdb_api
+```
+
 ## API detail
 ![api detail](https://github.com/Akaru1xR1N/README.img/blob/master/apidetail.png "api detail")
 ```diff
