@@ -8,6 +8,7 @@ This branch is the part of backend that includes
 &nbsp;&nbsp;|--**api**<br>
 &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---*`undefined.js`*<br>
 &nbsp;&nbsp;|--**backup** ***(database backup folder)***<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---*`clinic_db_backup_YYYY-MM-DD hh:mm:ss.sql`*<br>
 &nbsp;&nbsp;|--**config**<br>
 &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---[*`variable.js`*](https://github.com/Akaru1xR1N/clinic-project-db#variablejs "File detail")<br>
 &nbsp;&nbsp;|--**db**<br>
