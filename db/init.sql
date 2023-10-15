@@ -29,7 +29,7 @@ CREATE TABLE tb_owner(
     surname VARCHAR(50) NOT NULL,
     nationalID VARCHAR(13) NOT NULL,
     password VARCHAR(200) NOT NULL,
-    email VARCHAR(100) NULL
+    email VARCHAR(100) NOT NULL
 );
 
 -- table tb_clinic
@@ -37,13 +37,14 @@ DROP TABLE IF EXISTS tb_clinic;
 CREATE TABLE tb_clinic(
     clinicID SMALLINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
-    province VARCHAR(30) NOT NULL,
-    amphure VARCHAR(30) NOT NULL,
-    tambon VARCHAR(30) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    amphure VARCHAR(50) NOT NULL,
+    tambon VARCHAR(50) NOT NULL,
     place VARCHAR(200) NOT NULL,
-    detail VARCHAR(200) NOT NULL,
+    detail VARCHAR(200) NULL,
     totalMoney DECIMAL(14,4) NOT NULL DEFAULT 0,
-    createDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP()
+    createDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    inUsed BIT NOT NULL DEFAULT 1
 );
 
 -- table tb_bank
@@ -102,7 +103,7 @@ CREATE TABLE tb_admin(
     password VARCHAR(200) NOT NULL,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NULL,
+    email VARCHAR(100) NOT NULL,
 
     -- FK
     CONSTRAINT `fk_clinicID_from_tb_clinic_to_admin` FOREIGN KEY (clinicID) REFERENCES tb_clinic(clinicID) ON DELETE CASCADE ON UPDATE RESTRICT
@@ -165,7 +166,7 @@ CREATE TABLE tb_customer(
     gender VARCHAR(1) NOT NULL,
     nationalID VARCHAR(13) NOT NULL,
     password VARCHAR(200) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NULL,
     phone VARCHAR(20) NOT NULL,
     drugAllergy VARCHAR(200) NULL,
     disease VARCHAR(200) NULL,
