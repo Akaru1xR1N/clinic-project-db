@@ -38,6 +38,7 @@
 
 # API
 ## customer
-|Method|group|path|detail|data send|data receive|note|
-|:----:|:---:|:--:|:----:|:-------:|:----------:|:--:|
-|post|/customer|/ |customer register|{name,surname,gender,nationalID,password,phone,blood}|message| |
+|method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
+|:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
+|post  |/customer  |/              |customer register     |*{name,surname,gender,nationalID,password,phone,blood} \n {email,drugAllergy,desease}|      message  |                 |
+|:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
