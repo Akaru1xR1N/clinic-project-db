@@ -62,29 +62,24 @@ async function connection(){
     return con
 }
 
-// Add customer
+// Add owner
 router.post("/", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
         name: null,
         surname: null,
-        gender: null,
         nationalID: null,
         password: null,
-        phone: null,
-        blood: null,
-        email: null,
-        drugAllergy: null,
-        disease: null
+        email: null
     }
     //validation
-    var valueCanNull = ["email", "drugAllergy", "disease"]
+    var valueCanNull = []
     for (const [key, value] of Object.entries(input)) {
         if (req.body[key] === undefined) {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.body[key]
     }
@@ -92,11 +87,11 @@ router.post("/", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("INSERT INTO tb_customer (name, surname, gender, nationalID, password, phone, blood, email, drugAllergy, disease) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-        [input.name, input.surname, input.gender, input.nationalID, hashPassword, input.phone, input.blood, input.email, input.drugAllergy, input.disease])
+        const result = await con.query("INSERT INTO tb_owner (name, surname, nationalID, password, email) VALUES (?, ?, ?, ?, ?);",
+        [input.name, input.surname, input.nationalID, hashPassword, input.email])
         if (!result.length) throw new Error("Something went wrong")
 
-        return res.send({error: false, message: "Add customer complete"})
+        return res.send({error: false, message: "Add owner complete"})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
@@ -107,40 +102,35 @@ router.post("/", async (req, res) => {
     }
 })
 
-// update customer info
+// Update owner info
 router.put("/", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-        customerID: null,
+        ownerID: null,
         name: null,
         surname: null,
-        gender: null,
         nationalID: null,
-        phone: null,
-        blood: null,
-        email: null,
-        drugAllergy: null,
-        disease: null
+        email: null
     }
     //validation
-    var valueCanNull = ["email", "drugAllergy", "disease"]
+    var valueCanNull = []
     for (const [key, value] of Object.entries(input)) {
         if (req.body[key] === undefined) {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.body[key]
     }
 
     const con = await connection()
     try{
-        const result = await con.query("UPDATE tb_customer SET name=?, surname=?, gender=?, nationalID=?, phone=?, blood=?, email=?, drugAllergy=?, disease=? WHERE customerID=?;",
-        [input.name, input.surname, input.gender, input.nationalID, input.phone, input.blood, input.email, input.drugAllergy, input.disease, input.customerID])
+        const result = await con.query("UPDATE tb_owner SET name=?, surname=?, nationalID=?, email=? WHERE ownerID=?;",
+        [input.name, input.surname, input.nationalID, input.email, input.ownerID])
         if (!result.length) throw new Error("Something went wrong")
 
-        return res.send({error: false, message: "Update customer info complete"})
+        return res.send({error: false, message: "Update owner info complete"})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
@@ -151,11 +141,45 @@ router.put("/", async (req, res) => {
     }
 })
 
-// get customer info
+// Delete owner info
+router.delete("/", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        ownerID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("DELETE FROM tb_owner WHERE ownerID=?;", input.ownerID)
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Delete owner complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get owner info
 router.get("/", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-        customerID: null
+        ownerID: null
     }
     //validation
     var valueCanNull = []
@@ -164,50 +188,17 @@ router.get("/", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.query[key]
     }
+
     const con = await connection()
     try{
-        const result = await con.query("SELECT customerID,name,surname,gender,nationalID,phone,blood,email,drugAllergy,disease FROM tb_customer WHERE customerID=?;",
-        [input.customerID])
+        const result = await con.query("SELECT ownerID,name,surname,nationalID,email FROM tb_owner WHERE ownerID=?;", input.ownerID)
         if (!result.length) throw new Error("Something went wrong")
 
-        return res.send({error: false, message: "Get customer info complete", data:result[0][0]})
-    }
-    catch (err){
-        logger.error(req.originalUrl + " => " + err.message)
-        return res.status(400).send({error: true, message: err.message})
-    }
-    finally{
-        con.end()
-    }
-})
-
-// get all customer info
-router.get("/list", async (req, res) => {
-    console.log(req.originalUrl)
-    let input = {
-
-    }
-    //validation
-    var valueCanNull = []
-    for (const [key, value] of Object.entries(input)) {
-        if (req.query[key] === undefined) {
-            if (valueCanNull.includes(key)) {
-                continue
-            }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
-        }
-        input[key] = req.query[key]
-    }
-    const con = await connection()
-    try{
-        const result = await con.query("SELECT customerID,name,surname,gender,nationalID,phone,blood,email,drugAllergy,disease FROM tb_customer;")
-        if (!result.length) throw new Error("Something went wrong")
-
-        return res.send({error: false, message: "Get all customer info complete", data:result[0]})
+        return res.send({error: false, message: "Get owner info complete", data:result[0][0]})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)

@@ -13,7 +13,12 @@ const path = require("path")
 const ip = require("ip")
 const PORT = 3010
 
+const clinic = require("./api/clinic")
+const owner = require("./api/owner")
+const admin = require("./api/admin")
+const doctor = require("./api/doctor")
 const customer = require("./api/customer")
+const location = require("./api/location")
 
 if (!fs.existsSync("log")){
     fs.mkdirSync("log")
@@ -58,7 +63,12 @@ app.use(cors())
 app.use(bp.json())
 app.use(bp.urlencoded({extends: true}))
 
+app.use("/clinic", clinic)
+app.use("/owner", owner)
+app.use("/admin", admin)
+app.use("/doctor", doctor)
 app.use("/customer", customer)
+app.use("/location", location)
 
 app.get("/", async (req, res) => {
     return res.send({

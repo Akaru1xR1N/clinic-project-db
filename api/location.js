@@ -62,119 +62,31 @@ async function connection(){
     return con
 }
 
-// Add customer
-router.post("/", async (req, res) => {
-    console.log(req.originalUrl)
-    let input = {
-        name: null,
-        surname: null,
-        gender: null,
-        nationalID: null,
-        password: null,
-        phone: null,
-        blood: null,
-        email: null,
-        drugAllergy: null,
-        disease: null
-    }
-    //validation
-    var valueCanNull = ["email", "drugAllergy", "disease"]
-    for (const [key, value] of Object.entries(input)) {
-        if (req.body[key] === undefined) {
-            if (valueCanNull.includes(key)) {
-                continue
-            }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
-        }
-        input[key] = req.body[key]
-    }
-    let hashPassword = crypto.pbkdf2Sync(input.password, saltDB, 1000, 64, "sha512").toString("hex")
-
-    const con = await connection()
-    try{
-        const result = await con.query("INSERT INTO tb_customer (name, surname, gender, nationalID, password, phone, blood, email, drugAllergy, disease) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-        [input.name, input.surname, input.gender, input.nationalID, hashPassword, input.phone, input.blood, input.email, input.drugAllergy, input.disease])
-        if (!result.length) throw new Error("Something went wrong")
-
-        return res.send({error: false, message: "Add customer complete"})
-    }
-    catch (err){
-        logger.error(req.originalUrl + " => " + err.message)
-        return res.status(400).send({error: true, message: err.message})
-    }
-    finally{
-        con.end()
-    }
-})
-
-// update customer info
-router.put("/", async (req, res) => {
-    console.log(req.originalUrl)
-    let input = {
-        customerID: null,
-        name: null,
-        surname: null,
-        gender: null,
-        nationalID: null,
-        phone: null,
-        blood: null,
-        email: null,
-        drugAllergy: null,
-        disease: null
-    }
-    //validation
-    var valueCanNull = ["email", "drugAllergy", "disease"]
-    for (const [key, value] of Object.entries(input)) {
-        if (req.body[key] === undefined) {
-            if (valueCanNull.includes(key)) {
-                continue
-            }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
-        }
-        input[key] = req.body[key]
-    }
-
-    const con = await connection()
-    try{
-        const result = await con.query("UPDATE tb_customer SET name=?, surname=?, gender=?, nationalID=?, phone=?, blood=?, email=?, drugAllergy=?, disease=? WHERE customerID=?;",
-        [input.name, input.surname, input.gender, input.nationalID, input.phone, input.blood, input.email, input.drugAllergy, input.disease, input.customerID])
-        if (!result.length) throw new Error("Something went wrong")
-
-        return res.send({error: false, message: "Update customer info complete"})
-    }
-    catch (err){
-        logger.error(req.originalUrl + " => " + err.message)
-        return res.status(400).send({error: true, message: err.message})
-    }
-    finally{
-        con.end()
-    }
-})
-
-// get customer info
+// get all provinces
 router.get("/", async (req, res) => {
     console.log(req.originalUrl)
+    
     let input = {
-        customerID: null
+
     }
     //validation
     var valueCanNull = []
     for (const [key, value] of Object.entries(input)) {
-        if (req.query[key] === undefined) {
+        if (req.body[key] === undefined) {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
-        input[key] = req.query[key]
+        input[key] = req.body[key]
     }
-    const con = await connection()
+
+    const con = await connection();
     try{
-        const result = await con.query("SELECT customerID,name,surname,gender,nationalID,phone,blood,email,drugAllergy,disease FROM tb_customer WHERE customerID=?;",
-        [input.customerID])
+        const result = await con.query("SELECT id AS province_id, name_th FROM thai_provinces;")
         if (!result.length) throw new Error("Something went wrong")
 
-        return res.send({error: false, message: "Get customer info complete", data:result[0][0]})
+        return res.send({ error: false, message: "get all provinces complete", data: result[0]})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
@@ -185,11 +97,46 @@ router.get("/", async (req, res) => {
     }
 })
 
-// get all customer info
-router.get("/list", async (req, res) => {
+// get all amphures from province id
+router.get("/amphures", async (req, res) => {
+    console.log(req.originalUrl)
+    
+    let input = {
+        province_id: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection();
+    try{
+        const result = await con.query("SELECT id AS amphure_id, name_th FROM thai_amphures WHERE province_id=?;", [input.province_id])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({ error: false, message: "get all amphures from province complete", data: result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// get all tambons from amphure id
+router.get("/tambons", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-
+        amphure_id: null
     }
     //validation
     var valueCanNull = []
@@ -198,16 +145,17 @@ router.get("/list", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.query[key]
     }
-    const con = await connection()
+
+    const con = await connection();
     try{
-        const result = await con.query("SELECT customerID,name,surname,gender,nationalID,phone,blood,email,drugAllergy,disease FROM tb_customer;")
+        const result = await con.query("SELECT id AS tambon_id, name_th, zip_code FROM thai_tambons WHERE amphure_id=?;", [input.amphure_id])
         if (!result.length) throw new Error("Something went wrong")
 
-        return res.send({error: false, message: "Get all customer info complete", data:result[0]})
+        return res.send({ error: false, message: "get all tambons from amphure complete", data: result[0]})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
@@ -218,4 +166,4 @@ router.get("/list", async (req, res) => {
     }
 })
 
-module.exports = router
+module.exports = router;
