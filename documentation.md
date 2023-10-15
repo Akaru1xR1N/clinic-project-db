@@ -42,3 +42,4 @@
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/customer  |/              |customer register     |*{name,surname,gender,nationalID,password,phone,blood}{email,drugAllergy,desease}|      message  |                 |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
+|put   |/customer  |/              |customer update info  |*{name,surname,gender,nationalID,password,phone,blood}{email,drugAllergy,desease}|      message  |                 |
