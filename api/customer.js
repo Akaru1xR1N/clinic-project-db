@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.body[key]
     }
@@ -129,7 +129,7 @@ router.put("/", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.body[key]
     }
@@ -164,7 +164,7 @@ router.get("/", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.query[key]
     }
@@ -198,7 +198,7 @@ router.get("/list", async (req, res) => {
             if (valueCanNull.includes(key)) {
                 continue
             }
-            return res.status(400).send({ error: true, message: `please provide data according to format for KEY = ${key}.` })
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
         input[key] = req.query[key]
     }
