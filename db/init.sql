@@ -388,11 +388,11 @@ delimiter ;
 /***************************************************************
 --              Save history then delete reqTime
 ***************************************************************/
--- unfinish
+
 -- procedure after treat finist save history then delete reqTime
-DROP PROCEDURE IF EXISTS treatFinish;
+DROP PROCEDURE IF EXISTS sp_treatFinish;
 delimiter //
-CREATE PROCEDURE treatFinish(IN DrID MEDIUMINT UNSIGNED)
+CREATE PROCEDURE sp_treatFinish(IN DrID MEDIUMINT UNSIGNED)
     BEGIN
         DECLARE currentTime DATETIME DEFAULT CURRENT_TIMESTAMP();
         DECLARE initTime DATETIME DEFAULT (SELECT MIN(startTime) FROM tb_reqTime WHERE doctorID=DrID);
@@ -407,6 +407,25 @@ CREATE PROCEDURE treatFinish(IN DrID MEDIUMINT UNSIGNED)
         ELSEIF currentTime > finTime THEN
             INSERT INTO tb_historyEvaluate (doctorID, customerID, typeID, time) VALUES (DrID, cusID, serviceType, currentTime);
             DELETE FROM tb_reqTime WHERE startTime=initTime AND doctorID=DrID AND typeID=serviceType;
+        END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+--   Change state clinic to unused or delete clinic complete
+***************************************************************/
+
+-- procedure change state to unused or delete clinic
+DROP PROCEDURE IF EXISTS sp_changeStateOrDeleteClinic;
+delimiter //
+CREATE PROCEDURE sp_changeStateOrDeleteClinic(IN cID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE clinicState BIT DEFAULT (SELECT inUsed FROM tb_clinic WHERE clinicID=cID);
+        IF clinicState = 1 THEN
+            UPDATE tb_clinic SET inUsed=0 WHERE clinicID=cID;
+        ELSE
+            DELETE FROM tb_clinic WHERE clinicID=cID;
         END IF;
     END;
 //
