@@ -35,3 +35,9 @@
 
 # Entity Relationship diagram
 !["ERD"](https://github.com/Akaru1xR1N/clinic-project-db/blob/backend/db/er.png "ERD")
+
+# API
+## customer
+|Method|group|path|detail|data send|data receive|note|
+|:----:|:---:|:--:|:----:|:-------:|:----------:|:--:|
+|post|/customer|/ |customer register|{name,surname,gender,nationalID,password,phone,blood}|message| |
