@@ -25,7 +25,7 @@ This branch is the part of backend that includes
 ![setup](https://github.com/Akaru1xR1N/README.img/blob/master/setup.png "setup")
 ```sh
 pnpm init
-pnpm install crypto express mysql2 mysqldump
+pnpm install crypto express mysql2 mysqldump body-parser cors winston winston-daily-rotate-file node-cron fs ip path moment
 ```
 
 ## Setup detail
@@ -34,6 +34,15 @@ pnpm install crypto express mysql2 mysqldump
 * `express` - web app framework
 * `mysql2` - connect to mysql server
 * `mysqldump` - dump database to a file
+* `body-parser` - sent data via post method
+* `cors` - allow only server to use api
+* `winston` - log file
+* `winston-daily-rotate-file` - make log file every day
+* `node-cron` - to generate log every fay
+* `fs` - file handler
+* `ip` - to show ip address
+* `path` - path handler
+* `moment` - time handler
 
 ## Clone project
 ![setup detail](https://github.com/Akaru1xR1N/README.img/blob/master/clone.png "setup detail")
