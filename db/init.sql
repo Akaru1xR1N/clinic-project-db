@@ -40,11 +40,12 @@ CREATE TABLE tb_clinic(
     province VARCHAR(50) NOT NULL,
     amphure VARCHAR(50) NOT NULL,
     tambon VARCHAR(50) NOT NULL,
+    zip_code VARCHAR(5) NOT NULL,
     place VARCHAR(200) NOT NULL,
     detail VARCHAR(200) NULL,
     totalMoney DECIMAL(14,4) NOT NULL DEFAULT 0,
     createDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    inUsed BIT NOT NULL DEFAULT 1
+    inUsed TINYINT NOT NULL DEFAULT 1
 );
 
 -- table tb_bank
@@ -53,7 +54,7 @@ CREATE TABLE tb_bank(
     clinicID SMALLINT UNSIGNED NOT NULL,
     time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     value DECIMAL(14,4) NOT NULL,
-    type BIT NOT NULL,
+    type TINYINT NOT NULL,
 
     -- FK
     CONSTRAINT `fk_clinicID_from_tb_clinic_to_bank` FOREIGN KEY (clinicID) REFERENCES tb_clinic(clinicID) ON DELETE CASCADE ON UPDATE RESTRICT
@@ -63,7 +64,8 @@ CREATE TABLE tb_bank(
 DROP TABLE IF EXISTS tb_category;
 CREATE TABLE tb_category(
     categoryID SMALLINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    categoryName VARCHAR(50) NOT NULL
+    categoryName VARCHAR(50) NOT NULL,
+    inUsed TINYINT NOT NULL DEFAULT 1
 );
 
 -- table tb_serviceType
@@ -72,10 +74,10 @@ CREATE TABLE tb_serviceType(
     typeID SMALLINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     categoryID SMALLINT UNSIGNED NOT NULL,
     clinicID SMALLINT UNSIGNED NOT NULL,
-    typeName VARCHAR(30) NOT NULL,
+    typeName VARCHAR(50) NOT NULL,
     duration TIME NOT NULL,
     price DECIMAL(14,4) NOT NULL,
-    inUsed BIT NOT NULL DEFAULT 1,
+    inUsed TINYINT NOT NULL DEFAULT 1,
 
     -- FK
     CONSTRAINT `fk_categoryID_from_tb_category_to_serviceType` FOREIGN KEY (categoryID) REFERENCES tb_category(categoryID) ON DELETE CASCADE ON UPDATE RESTRICT,
@@ -132,6 +134,7 @@ DROP TABLE IF EXISTS tb_doctor;
 CREATE TABLE tb_doctor(
     doctorID MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     clinicID SMALLINT UNSIGNED NOT NULL,
+    adminID SMALLINT UNSIGNED NOT NULL,
     prefix VARCHAR(10) NOT NULL,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
@@ -140,10 +143,11 @@ CREATE TABLE tb_doctor(
     password VARCHAR(200) NOT NULL,
     licensePath VARCHAR(200) NULL,
     facePath VARCHAR(200) NULL,
-    email VARCHAR(100) NULL,
+    email VARCHAR(100) NOT NULL,
 
     -- FK
-    CONSTRAINT `fk_clinicID_from_tb_clinic_to_doctor` FOREIGN KEY (clinicID) REFERENCES tb_clinic(clinicID) ON DELETE CASCADE ON UPDATE RESTRICT
+    CONSTRAINT `fk_clinicID_from_tb_clinic_to_doctor` FOREIGN KEY (clinicID) REFERENCES tb_clinic(clinicID) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `fk_adminID_from_tb_admin_to_doctor` FOREIGN KEY (adminID) REFERENCES tb_admin(adminID) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 -- table tb_timetable
@@ -421,12 +425,73 @@ DROP PROCEDURE IF EXISTS sp_changeStateOrDeleteClinic;
 delimiter //
 CREATE PROCEDURE sp_changeStateOrDeleteClinic(IN cID SMALLINT UNSIGNED)
     BEGIN
-        DECLARE clinicState BIT DEFAULT (SELECT inUsed FROM tb_clinic WHERE clinicID=cID);
+        DECLARE clinicState TINYINT DEFAULT (SELECT inUsed FROM tb_clinic WHERE clinicID=cID);
         IF clinicState = 1 THEN
             UPDATE tb_clinic SET inUsed=0 WHERE clinicID=cID;
         ELSE
             DELETE FROM tb_clinic WHERE clinicID=cID;
         END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+-- Change state service category to unused or delete service category complete
+***************************************************************/
+
+-- procedure change state to unused or delete service category
+DROP PROCEDURE IF EXISTS sp_changeStateOrDeleteServiceCategory;
+delimiter //
+CREATE PROCEDURE sp_changeStateOrDeleteServiceCategory(IN cateID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE serviceCategoryState TINYINT DEFAULT (SELECT inUsed FROM tb_category WHERE categoryID=cateID);
+        IF serviceCategoryState = 1 THEN
+            UPDATE tb_category SET inUsed=0 WHERE categoryID=cateID;
+        ELSE
+            DELETE FROM tb_category WHERE categoryID=cateID;
+        END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+-- Change state service type to unused or delete service type complete
+***************************************************************/
+
+-- procedure change state to unused or delete service type
+DROP PROCEDURE IF EXISTS sp_changeStateOrDeleteServiceType;
+delimiter //
+CREATE PROCEDURE sp_changeStateOrDeleteServiceType(IN tID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE serviceTypeState TINYINT DEFAULT (SELECT inUsed FROM tb_serviceType WHERE typeID=tID);
+        IF serviceTypeState = 1 THEN
+            UPDATE tb_serviceType SET inUsed=0 WHERE typeID=tID;
+        ELSE
+            DELETE FROM tb_serviceType WHERE typeID=tID;
+        END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+--               Get total money per month
+***************************************************************/
+
+-- procedure get total money per month
+DROP PROCEDURE IF EXISTS sp_totalMoneyPerMonth;
+delimiter //
+CREATE PROCEDURE sp_totalMoneyPerMonth(IN cID SMALLINT UNSIGNED, IN y SMALLINT UNSIGNED, IN m TINYINT UNSIGNED, OUT val DECIMAL(14,4))
+    BEGIN
+        DECLARE income DECIMAL(14,4) DEFAULT (SELECT SUM(value) FROM tb_bank WHERE clinicID=cID AND type=1 AND YEAR(time)=y AND MONTH(time)=m);
+        DECLARE expense DECIMAL(14,4) DEFAULT (SELECT SUM(value) FROM tb_bank WHERE clinicID=cID AND type=0 AND YEAR(time)=y AND MONTH(time)=m);
+        IF income IS NULL THEN
+            SET income = 0;
+        END IF;
+        IF expense IS NULL THEN
+            SET expense = 0;
+        END IF;
+
+        SET val = income - expense;
     END;
 //
 delimiter ;
