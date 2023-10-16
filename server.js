@@ -110,7 +110,7 @@ cron.schedule("59 23 * * *", () => {
     }
 
     try{
-        let filename = `${database};${moment().format("YYYY-MM-DD HH.mm.ss")}`
+        let filename = `${database};${moment().format("YYYY-MM-DD HH.mm.ss")}.sql`
         mysqldump({
             connection: {
                 host: hostDB,
@@ -119,8 +119,9 @@ cron.schedule("59 23 * * *", () => {
                 password: passwordDB,
                 database: database
             },
-            dumpToFile: `./backup/${filename}.sql`
+            dumpToFile: `./backup/${filename}`
         })
+        logger.info(` [schedule   ] BACKUP SUCCESS! :) filename:${filename}`)
     }
     catch{
         logger.error(" [schedule   ] SOMETHING WENT WRONG WHILE BACKUP DATABASE")
