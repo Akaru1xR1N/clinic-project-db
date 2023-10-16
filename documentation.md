@@ -41,7 +41,7 @@
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/clinic    |/              |Add clinic            |*{name,province,amphure,tambon,zip_code,place}{detail,totalMoney,createDate}|    message             |                 |
-|put   |/clinic    |/              |update clinic info    |*{clinicID,name,province,amphure,tambon,zip_code,place,totalMoney,createDate}{detail}|message             |                 |
+|put   |/clinic    |/              |update clinic info    |*{clinicID,name,province,amphure,tambon,zip_code,place,totalMoney,createDate}{detail}|message        |                 |
 |delete|/clinic    |/              |delete clinic         |*{clinicID}                                                   |                  message             |change state to unused if delete again it will delete all info about clinic|
 |get   |/clinic    |/              |get clinic info       |*{clinicID}                                                   |{clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail}| |
 |get   |/clinic    |/inused        |get clinic inused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
@@ -50,13 +50,13 @@
 |get   |/clinic    |/totalStatement|get total money clinic statement per month|*{clinicID, year, month}                  |{value}                               |                 |
 |post  |/clinic    |/service/category|Add service category|*{categoryName}                                               |                  message             |                 |
 |put   |/clinic    |/service/category|Update service category|*{categoryID,categoryName,inUsed}                          |                  message             |                 |
-|delete|/clinic    |/service/category|delete service category|*{categoryID}                                              |                  message             |                 |
+|delete|/clinic    |/service/category|delete service category|*{categoryID}                                              |                  message             |change state to unused if delete again it will delete all info about service category|
 |get   |/clinic    |/service/category|Get service category|*{categoryID}                                                 |{categoryID,categoryName,inUsed}      |                 |
 |get   |/clinic    |/service/category/inused|Get service category inused list|             -                             |[categoryID,categoryName,inUsed]      |                 |
 |get   |/clinic    |/service/category/unused|Get service category unused list|             -                             |[categoryID,categoryName,inUsed]      |                 |
 |post  |/clinic    |/service/type  |Add service type      |*{categoryID,clinicID,typeName,duration,price}                |                  message             |                 |
 |put   |/clinic    |/service/type  |Update service type   |*{typeID,categoryID,clinicID,typeName,duration,price}         |                  message             |                 |
-|delete|/clinic    |/service/type  |Delete service type   |*{typeID}                                                     |                  message             |                 |
+|delete|/clinic    |/service/type  |Delete service type   |*{typeID}                                                     |                  message             |change state to unused if delete again it will delete all info about service type|
 |get   |/clinic    |/service/type  |Get service type info |*{typeID}                                                     |{typeID,categoryID,clinicID,typeName,duration,price,inUsed}| |
 |get   |/clinic    |/service/type/inused|Get list service type inused|                     -                             |[typeID,categoryID,clinicID,typeName,duration,price,inUsed]| |
 |get   |/clinic    |/service/type/unused|Get list service type unused|                     -                             |[typeID,categoryID,clinicID,typeName,duration,price,inUsed]| |
