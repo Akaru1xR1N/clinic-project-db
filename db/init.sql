@@ -8,6 +8,9 @@ CREATE DATABASE db_clinic_project COLLATE "utf8mb4_general_ci";
 
 USE db_clinic_project;
 
+SET @@global.time_zone = "SYSTEM";
+SET @@session.time_zone = "SYSTEM";
+
 /***************************************************************
 --                          static table
 ***************************************************************/
