@@ -50,7 +50,8 @@ async function connection(){
         port: portDB,
         user: userDB,
         password: passwordDB,
-        database: database
+        database: database,
+        timezone: "+00:00"
     })
     con.connect((err)=>{
         if (err){
