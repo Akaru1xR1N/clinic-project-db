@@ -51,7 +51,8 @@ async function connection(){
         port: portDB,
         user: userDB,
         password: passwordDB,
-        database: database
+        database: database,
+        timezone: "+00:00"
     })
     con.connect((err)=>{
         if (err){
@@ -71,6 +72,7 @@ router.post("/", async (req, res) => {
         province: null,
         amphure: null,
         tambon: null,
+        zip_code: null,
         place: null,
         detail: null,
         totalMoney: null,
@@ -92,8 +94,8 @@ router.post("/", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("INSERT INTO tb_clinic (name, province, amphure, tambon, place, detail, totalMoney, createDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-        [input.name, input.province, input.amphure, input.tambon, input.place, input.detail, input.totalMoney, input.createDate])
+        const result = await con.query("INSERT INTO tb_clinic (name, province, amphure, tambon, zip_code, place, detail, totalMoney, createDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        [input.name, input.province, input.amphure, input.tambon, input.zip_code, input.place, input.detail, input.totalMoney, input.createDate])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Add clinic complete"})
@@ -116,6 +118,7 @@ router.put("/", async (req, res) => {
         province: null,
         amphure: null,
         tambon: null,
+        zip_code: null,
         place: null,
         detail: null,
         totalMoney: null,
@@ -137,8 +140,8 @@ router.put("/", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("UPDATE tb_clinic SET name=?, province=?, amphure=?, tambon=?, place=?, detail=?, totalMoney=?, createDate=? WHERE clinicID=?;",
-        [input.name, input.province, input.amphure, input.tambon, input.place, input.detail, input.totalMoney, input.createDate, input.clinicID])
+        const result = await con.query("UPDATE tb_clinic SET name=?, province=?, amphure=?, tambon=?, zip_code=?, place=?, detail=?, totalMoney=?, createDate=? WHERE clinicID=?;",
+        [input.name, input.province, input.amphure, input.tambon, input.zip_code, input.place, input.detail, input.totalMoney, input.createDate, input.clinicID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Update clinic info complete"})
@@ -224,6 +227,7 @@ router.get("/", async (req, res) => {
 router.get("/inused", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
+
     }
     //validation
     var valueCanNull = []
@@ -257,6 +261,7 @@ router.get("/inused", async (req, res) => {
 router.get("/unused", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
+
     }
     //validation
     var valueCanNull = []
@@ -276,6 +281,502 @@ router.get("/unused", async (req, res) => {
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get all clinic info that is in unused state complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// view statement
+router.get("/statement", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        clinicID: null,
+        year: null,
+        month: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_bank WHERE clinicID=? AND YEAR(time)=? AND MONTH(time)=? ORDER BY time ASC;", [input.clinicID, input.year, input.month])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get clinic statement per month complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get total statement
+router.get("/totalStatement", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        clinicID: null,
+        year: null,
+        month: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("CALL sp_totalMoneyPerMonth(?, ?, ?, @val);",
+        [input.clinicID, input.year, input.month])
+        if (!result.length) throw new Error("Something went wrong")
+        const results = await con.query("SELECT @val AS value;")
+        if (!results.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get total clinic statement per month complete", data:results[0][0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Add service category
+router.post("/service/category", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryName: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("INSERT INTO tb_category (categoryName) VALUES (?);", [input.categoryName])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Add service category complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Update service category
+router.put("/service/category", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryID: null,
+        categoryName: null,
+        inUsed: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("UPDATE tb_category SET categoryName=?, inUsed=? WHERE categoryID=?;", [input.categoryName, input.inUsed, input.categoryID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Update service category complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Delete service category
+router.delete("/service/category", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("CALL sp_changeStateOrDeleteServiceCategory(?);", [input.categoryID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Change state or delete service category complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get service category info
+router.get("/service/category", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_category WHERE categoryID=?;", [input.categoryID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get service category info complete", data: result[0][0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get service category inused
+router.get("/service/category/inused", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_category WHERE inUsed=1;")
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get service category that is inUsed complete", data: result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get service category unused
+router.get("/service/category/unused", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_category WHERE inUsed=0;")
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get service category that is unUsed complete", data: result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Add service type
+router.post("/service/type", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryID: null,
+        clinicID: null,
+        typeName: null,
+        duration: null,
+        price: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("INSERT INTO tb_serviceType (categoryID, clinicID, typeName, duration, price) VALUES (?, ?, ?, ?, ?);",
+        [input.categoryID, input.clinicID, input.typeName, input.duration, input.price])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Add service type complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Update service type
+router.put("/service/type", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        typeID: null,
+        categoryID: null,
+        clinicID: null,
+        typeName: null,
+        duration: null,
+        price: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("UPDATE tb_serviceType SET categoryID=?, clinicID=?, typeName=?, duration=?, price=? WHERE typeID=?;",
+        [input.categoryID, input.clinicID, input.typeName, input.duration, input.price, input.typeID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Add service type complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Delete service type
+router.delete("/service/type", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        typeID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("CALL sp_changeStateOrDeleteServiceType(?);", [input.typeID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Change state or delete service type complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get service type info
+router.get("/service/type", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        typeID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_serviceType WHERE typeID=?;", [input.typeID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get service type info complete", data: result[0][0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get list service type inused
+router.get("/service/type/inused", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=1;")
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get list service type inused complete", data: result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Get list service type unused
+router.get("/service/type/unused", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=0;")
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get list service type unused complete", data: result[0]})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)

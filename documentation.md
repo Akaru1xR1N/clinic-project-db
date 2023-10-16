@@ -40,19 +40,33 @@
 ## clinic
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
-|post  |/clinic    |/              |Add clinic            |*{name,province,amphure,tambon,place}{detail,totalMoney,createDate}|             message             |                 |
-|put   |/clinic    |/              |update clinic info    |*{clinicID,name,province,amphure,tambon,place,totalMoney,createDate}{detail} |   message             |                 |
+|post  |/clinic    |/              |Add clinic            |*{name,province,amphure,tambon,zip_code,place}{detail,totalMoney,createDate}|    message             |                 |
+|put   |/clinic    |/              |update clinic info    |*{clinicID,name,province,amphure,tambon,zip_code,place,totalMoney,createDate}{detail}|message             |                 |
 |delete|/clinic    |/              |delete clinic         |*{clinicID}                                                   |                  message             |change state to unused if delete again it will delete all info about clinic|
 |get   |/clinic    |/              |get clinic info       |*{clinicID}                                                   |{clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail}| |
 |get   |/clinic    |/inused        |get clinic inused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
 |get   |/clinic    |/unused        |get clinic unused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
+|get   |/clinic    |/statement     |get clinic statement  |*{clinicID, year, month}                                      |[clinicID,time,value,type]            |                 |
+|get   |/clinic    |/totalStatement|get total money clinic statement per month|*{clinicID, year, month}                  |{value}                               |                 |
+|post  |/clinic    |/service/category|Add service category|*{categoryName}                                               |                  message             |                 |
+|put   |/clinic    |/service/category|Update service category|*{categoryID,categoryName,inUsed}                          |                  message             |                 |
+|delete|/clinic    |/service/category|delete service category|*{categoryID}                                              |                  message             |                 |
+|get   |/clinic    |/service/category|Get service category|*{categoryID}                                                 |{categoryID,categoryName,inUsed}      |                 |
+|get   |/clinic    |/service/category/inused|Get service category inused list|             -                             |[categoryID,categoryName,inUsed]      |                 |
+|get   |/clinic    |/service/category/unused|Get service category unused list|             -                             |[categoryID,categoryName,inUsed]      |                 |
+|post  |/clinic    |/service/type  |Add service type      |*{categoryID,clinicID,typeName,duration,price}                |                  message             |                 |
+|put   |/clinic    |/service/type  |Update service type   |*{typeID,categoryID,clinicID,typeName,duration,price}         |                  message             |                 |
+|delete|/clinic    |/service/type  |Delete service type   |*{typeID}                                                     |                  message             |                 |
+|get   |/clinic    |/service/type  |Get service type info |*{typeID}                                                     |{typeID,categoryID,clinicID,typeName,duration,price,inUsed}| |
+|get   |/clinic    |/service/type/inused|Get list service type inused|                     -                             |[typeID,categoryID,clinicID,typeName,duration,price,inUsed]| |
+|get   |/clinic    |/service/type/unused|Get list service type unused|                     -                             |[typeID,categoryID,clinicID,typeName,duration,price,inUsed]| |
 
 ## owner
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/owner     |/              |Add owner             |*{name,surname,nationalID,password,email}                     |                 message              |                 |
 |put   |/owner     |/              |update owner info     |*{ownerID,name,surname,nationalID,email}                      |                 message              |                 |
-|delete|/owner     |/              |delete owner info     |*{ownerID}                                                    |                 message              |                 |
+|delete|/owner     |/              |delete owner          |*{ownerID}                                                    |                 message              |                 |
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
 
 ## admin
@@ -60,10 +74,18 @@
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/admin     |/              |Add admin             |*{clinicID,name,surname,nationalID,password,email}            |                 message              |                 |
 |put   |/admin     |/              |update admin info     |*{clinicID,adminID,name,surname,nationalID,email}             |                 message              |                 |
-|delete|/admin     |/              |delete admin info     |*{adminID}                                                    |                 message              |                 |
+|delete|/admin     |/              |delete admin          |*{adminID}                                                    |                 message              |                 |
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
 
 ## doctor
+|method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
+|:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
+|post  |/doctor    |/              |Add doctor            |*{clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|       message              |                 |
+|put   |/doctor    |/              |update doctor info    |*{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|  message          |                 |
+|get   |/doctor    |/              |get doctor info       |*{doctorID}                                                    |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
+|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                    |                 message             |                 |
+|get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                          |[clinicID,customerID,typeID,doctorID,startTime]|       |
+|post  |/doctor    |/acceptRequestTime|Accept service request time from customer|*{doctorID,clinicID,customerID,typeID,startTime}|          message             |                 |
 
 ## customer
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -72,6 +94,8 @@
 |put   |/customer  |/              |customer update info  |*{customerID,name,surname,gender,nationalID,password,phone,blood}{email,drugAllergy,disease}|message |                 |
 |get   |/customer  |/              |get customer info     |*{customerID}      |{customerID,name,surname,gender,nationalID,phone,blood,email,drugAllergy,disease}|                 |
 |get   |/customer  |/list          |get all customer      |                                -                             |[customerID,name,surname,gender,phone]|                 |
+|post  |/customer  |/serviceRequest|Add customer service request|*{clinicID,customerID,typeID,startTime}                 |                  message             |                 |
+|delete|/customer  |/serviceRequest|Delete customer service request|*{clinicID,customerID,typeID,startTime}              |                  message             |                 |
 
 ## location
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |

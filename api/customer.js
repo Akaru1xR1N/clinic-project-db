@@ -50,7 +50,8 @@ async function connection(){
         port: portDB,
         user: userDB,
         password: passwordDB,
-        database: database
+        database: database,
+        timezone: "+00:00"
     })
     con.connect((err)=>{
         if (err){
@@ -208,6 +209,80 @@ router.get("/list", async (req, res) => {
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get all customer info complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Add customer request time
+router.post("/serviceRequest", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        clinicID: null,
+        customerID: null,
+        typeID: null,
+        startTime: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+    const con = await connection()
+    try{
+        const result = await con.query("INSERT INTO tb_reqTime(clinicID, customerID, typeID, startTime) VALUES(?, ?, ?, ?);",
+        [input.clinicID, input.customerID, input.typeID, input.startTime])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Add customer request time complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Delete customer request time
+router.delete("/serviceRequest", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        clinicID: null,
+        customerID: null,
+        typeID: null,
+        startTime: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+    const con = await connection()
+    try{
+        const result = await con.query("DELETE FROM tb_reqTime WHERE clinicID=? AND customerID=? AND typeID=? AND startTime=?;",
+        [input.clinicID, input.customerID, input.typeID, input.startTime])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Delete customer request time complete"})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
