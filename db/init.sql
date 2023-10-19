@@ -439,6 +439,23 @@ CREATE PROCEDURE sp_changeStateOrDeleteClinic(IN cID SMALLINT UNSIGNED)
 delimiter ;
 
 /***************************************************************
+--   Change state clinic from unused to inused
+***************************************************************/
+
+-- procedure change state from unused to inused
+DROP PROCEDURE IF EXISTS sp_changeStateBringBackClinic;
+delimiter //
+CREATE PROCEDURE sp_changeStateBringBackClinic(IN cID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE clinicState TINYINT DEFAULT (SELECT inUsed FROM tb_clinic WHERE clinicID=cID);
+        IF clinicState = 0 THEN
+            UPDATE tb_clinic SET inUsed=1 WHERE clinicID=cID;
+        END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
 -- Change state service category to unused or delete service category complete
 ***************************************************************/
 

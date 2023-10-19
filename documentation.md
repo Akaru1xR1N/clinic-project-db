@@ -42,7 +42,8 @@
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/clinic    |/              |Add clinic            |*{name,province,amphure,tambon,zip_code,place}{detail,totalMoney,createDate}|    message             |                 |
 |put   |/clinic    |/              |update clinic info    |*{clinicID,name,province,amphure,tambon,zip_code,place,totalMoney,createDate}{detail}|message        |                 |
-|delete|/clinic    |/              |delete clinic         |*{clinicID}                                                   |                  message             |change state to unused if delete again it will delete all info about clinic|
+|delete|/clinic    |/              |delete clinic         |*{clinicID}          |        message      |change state to unused if delete again it will delete all info about clinic|
+|get   |/clinic    |/bringback     |change unused to inused|*{clinicID}                                                   |                  message             |                |
 |get   |/clinic    |/              |get clinic info       |*{clinicID}                                                   |{clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail}| |
 |get   |/clinic    |/inused        |get clinic inused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
 |get   |/clinic    |/unused        |get clinic unused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
