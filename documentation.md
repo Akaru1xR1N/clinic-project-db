@@ -77,6 +77,7 @@
 |put   |/admin     |/              |update admin info     |*{clinicID,adminID,name,surname,nationalID,email}             |                 message              |                 |
 |delete|/admin     |/              |delete admin          |*{adminID}                                                    |                 message              |                 |
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
+|get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
 
 ## doctor
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |

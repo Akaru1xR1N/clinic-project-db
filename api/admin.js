@@ -212,4 +212,38 @@ router.get("/", async (req, res) => {
     }
 })
 
+// Get admin info
+router.get("/list", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        clinicID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT clinicID,adminID,name,surname,nationalID,email FROM tb_admin WHERE clinicID=?;", [input.clinicID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get all admin in clinic complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
 module.exports = router
