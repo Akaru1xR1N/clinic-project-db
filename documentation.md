@@ -69,6 +69,7 @@
 |put   |/owner     |/              |update owner info     |*{ownerID,name,surname,nationalID,email}                      |                 message              |                 |
 |delete|/owner     |/              |delete owner          |*{ownerID}                                                    |                 message              |                 |
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
+|get   |/owner     |/list          |get owner list        |                                -                             |{ownerID,name,surname,nationalID,email}|                |
 
 ## admin
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
