@@ -312,7 +312,7 @@ delimiter ;
 ***************************************************************/
 
 -- trigger total price and bank then store to storage
-DROP TRIGGER IF EXISTS totalPriceAndBankAndStorageOrderItem
+DROP TRIGGER IF EXISTS totalPriceAndBankAndStorageOrderItem;
 delimiter //
 CREATE TRIGGER totalPriceAndBankAndStorageOrderItem BEFORE INSERT ON tb_orderItem
     FOR EACH ROW
