@@ -470,6 +470,24 @@ CREATE PROCEDURE sp_changeStateOrDeleteServiceCategory(IN cateID SMALLINT UNSIGN
         ELSE
             DELETE FROM tb_category WHERE categoryID=cateID;
         END IF;
+        UPDATE tb_serviceType SET inUsed=0 WHERE categoryID=cateID;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+-- Change state service category from unused to inused service category
+***************************************************************/
+
+-- procedure change state from unused to inused service category
+DROP PROCEDURE IF EXISTS sp_changeStateBringBackServiceCategory;
+delimiter //
+CREATE PROCEDURE sp_changeStateBringBackServiceCategory(IN cateID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE serviceCategoryState TINYINT DEFAULT (SELECT inUsed FROM tb_category WHERE categoryID=cateID);
+        IF serviceCategoryState = 0 THEN
+            UPDATE tb_category SET inUsed=1 WHERE categoryID=cateID;
+        END IF;
     END;
 //
 delimiter ;
@@ -488,6 +506,23 @@ CREATE PROCEDURE sp_changeStateOrDeleteServiceType(IN tID SMALLINT UNSIGNED)
             UPDATE tb_serviceType SET inUsed=0 WHERE typeID=tID;
         ELSE
             DELETE FROM tb_serviceType WHERE typeID=tID;
+        END IF;
+    END;
+//
+delimiter ;
+
+/***************************************************************
+-- Change state service type from unused to inused service type
+***************************************************************/
+
+-- procedure change state from unused to inused service type
+DROP PROCEDURE IF EXISTS sp_changeStateBringBackServiceType;
+delimiter //
+CREATE PROCEDURE sp_changeStateBringBackServiceType(IN tID SMALLINT UNSIGNED)
+    BEGIN
+        DECLARE serviceTypeState TINYINT DEFAULT (SELECT inUsed FROM tb_serviceType WHERE typeID=tID);
+        IF serviceTypeState = 0 THEN
+            UPDATE tb_serviceType SET inUsed=1 WHERE typeID=tID;
         END IF;
     END;
 //

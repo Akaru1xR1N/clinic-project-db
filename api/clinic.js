@@ -190,7 +190,7 @@ router.delete("/", async (req, res) => {
 })
 
 // bring back from unused to inused
-router.get("/bringback", async (req, res) => {
+router.post("/bringback", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
         clinicID: null
@@ -198,13 +198,13 @@ router.get("/bringback", async (req, res) => {
     //validation
     var valueCanNull = []
     for (const [key, value] of Object.entries(input)) {
-        if (req.query[key] === undefined) {
+        if (req.body[key] === undefined) {
             if (valueCanNull.includes(key)) {
                 continue
             }
             return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
         }
-        input[key] = req.query[key]
+        input[key] = req.body[key]
     }
 
     const con = await connection()
@@ -504,6 +504,40 @@ router.delete("/service/category", async (req, res) => {
     }
 })
 
+// Bringback service category
+router.post("/service/category/bringback", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        categoryID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("CALL sp_changeStateBringBackServiceCategory(?);", [input.categoryID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Bring service category back complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
 // Get service category info
 router.get("/service/category", async (req, res) => {
     console.log(req.originalUrl)
@@ -719,6 +753,40 @@ router.delete("/service/type", async (req, res) => {
     }
 })
 
+// Bringback service type
+router.post("/service/type/bringback", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        typeID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("CALL sp_changeStateBringBackServiceType(?);", [input.typeID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Bring service type back complete"})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
 // Get service type info
 router.get("/service/type", async (req, res) => {
     console.log(req.originalUrl)
@@ -757,7 +825,7 @@ router.get("/service/type", async (req, res) => {
 router.get("/service/type/inused", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-        
+        clinicID: null
     }
     //validation
     var valueCanNull = []
@@ -773,7 +841,7 @@ router.get("/service/type/inused", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=1;")
+        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=1 AND clinicID=?;", [input.clinicID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get list service type inused complete", data: result[0]})
@@ -791,7 +859,7 @@ router.get("/service/type/inused", async (req, res) => {
 router.get("/service/type/unused", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-        
+        clinicID: null
     }
     //validation
     var valueCanNull = []
@@ -807,7 +875,7 @@ router.get("/service/type/unused", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=0;")
+        const result = await con.query("SELECT * FROM tb_serviceType WHERE inUsed=0 AND clinicID=?;", [input.clinicID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get list service type unused complete", data: result[0]})
