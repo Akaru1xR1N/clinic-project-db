@@ -1,0 +1,780 @@
+{
+	"info": {
+		"_postman_id": "6607f230-cc34-4133-8b09-463625634d9e",
+		"name": "db_clinic_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29626968"
+	},
+	"item": [
+		{
+			"name": "clinic",
+			"item": [
+				{
+					"name": "Add clinic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "คลินิกคุณปัณปัณ สาขา1",
+									"type": "text"
+								},
+								{
+									"key": "province",
+									"value": "กรุงเทพ",
+									"type": "text"
+								},
+								{
+									"key": "amphure",
+									"value": "บางนา",
+									"type": "text"
+								},
+								{
+									"key": "tambon",
+									"value": "บางนาใต้",
+									"type": "text"
+								},
+								{
+									"key": "place",
+									"value": "สะพานลอยข้ามโรงเรียน",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/clinic",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update clinic info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "clinicID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "คลินิกคุณปัณปัณ สาขา1",
+									"type": "text"
+								},
+								{
+									"key": "province",
+									"value": "กรุงเทพ",
+									"type": "text"
+								},
+								{
+									"key": "amphure",
+									"value": "บางนา",
+									"type": "text"
+								},
+								{
+									"key": "tambon",
+									"value": "บางนาใต้",
+									"type": "text"
+								},
+								{
+									"key": "place",
+									"value": "สะพานลอยข้ามโรงเรียน",
+									"type": "text"
+								},
+								{
+									"key": "createDate",
+									"value": "2023-10-16 00:36:03",
+									"type": "text"
+								},
+								{
+									"key": "detail",
+									"value": "This is clinic detail",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/clinic",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unused or delete clinic",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "clinicID",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/clinic",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get clinic info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/clinic?clinicID=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic"
+							],
+							"query": [
+								{
+									"key": "clinicID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list inused clinic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/clinic/inused",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic",
+								"inused"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list unused clinic Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/clinic/unused",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"clinic",
+								"unused"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "owner",
+			"item": [
+				{
+					"name": "Add owner",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Akarui",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Rin",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700051111",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Password123",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "akaruixrin@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/owner",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"owner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update owner info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ownerID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "AkaruixAlitosz",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Rin",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700051111",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Password123owner",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "akaruixrin@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/owner",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"owner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete owner",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ownerID",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/owner",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"owner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get owner info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/owner?ownerID=2",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"owner"
+							],
+							"query": [
+								{
+									"key": "ownerID",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "Add admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "clinicID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Admin01",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "sir",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700052222",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Password123",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "email@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/admin",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update admin info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "clinicID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "adminID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Admin01",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "yeah sir",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700052222",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Password123",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "email@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/admin",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete admin",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "adminID",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/admin",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get admin info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/admin?adminID=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"admin"
+							],
+							"query": [
+								{
+									"key": "adminID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "customer",
+			"item": [
+				{
+					"name": "Add customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Thanadej",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Phrompornchai",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "M",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700052292",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Password123",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0841615391",
+									"type": "text"
+								},
+								{
+									"key": "blood",
+									"value": "B",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3010/customer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update customer info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "customerID",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Thanadej",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Phrompornchai",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "M",
+									"type": "text"
+								},
+								{
+									"key": "nationalID",
+									"value": "1104700052292",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0841615391",
+									"type": "text"
+								},
+								{
+									"key": "blood",
+									"value": "B",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3010/customer",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get customer info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/customer?customerID=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"customer"
+							],
+							"query": [
+								{
+									"key": "customerID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all customer info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/customer/list",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"customer",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "location",
+			"item": [
+				{
+					"name": "get all provinces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/location",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"location"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all amphures",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/location/amphures?province_id=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"location",
+								"amphures"
+							],
+							"query": [
+								{
+									"key": "province_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all tambons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3010/location/tambons?amphure_id=1047",
+							"host": [
+								"localhost"
+							],
+							"port": "3010",
+							"path": [
+								"location",
+								"tambons"
+							],
+							"query": [
+								{
+									"key": "amphure_id",
+									"value": "1047"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
