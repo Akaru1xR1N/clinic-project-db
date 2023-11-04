@@ -240,6 +240,21 @@ CREATE TRIGGER checkValidClinic BEFORE INSERT ON tb_clinic
 //
 delimiter ;
 
+-- trigger check valid account owner
+DROP TRIGGER IF EXISTS checkValidOwner;
+delimiter //
+CREATE TRIGGER checkValidOwner BEFORE INSERT ON tb_owner
+    FOR EACH ROW
+    BEGIN
+        IF NEW.nationalID IN (SELECT nationalID FROM tb_owner WHERE nationalID=NEW.nationalID) THEN
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That nationalID valid";
+        ELSEIF NEW.email IN (SELECT email FROM tb_owner WHERE email=NEW.email) THEN
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That email valid";
+        END IF;
+    END;
+//
+delimiter ;
+
 -- trigger check valid account admin
 DROP TRIGGER IF EXISTS checkValidAdmin;
 delimiter //
@@ -248,6 +263,8 @@ CREATE TRIGGER checkValidAdmin BEFORE INSERT ON tb_admin
     BEGIN
         IF NEW.nationalID IN (SELECT nationalID FROM tb_admin WHERE nationalID=NEW.nationalID) THEN
             SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That nationalID valid";
+        ELSEIF NEW.email IN (SELECT email FROM tb_admin WHERE email=NEW.email) THEN
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That email valid";
         END IF;
     END;
 //
@@ -261,6 +278,8 @@ CREATE TRIGGER checkValidDoctor BEFORE INSERT ON tb_doctor
     BEGIN
         IF NEW.nationalID IN (SELECT nationalID FROM tb_doctor WHERE nationalID=NEW.nationalID) THEN
             SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That nationalID valid";
+        ELSEIF NEW.email IN (SELECT email FROM tb_doctor WHERE email=NEW.email) THEN
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "That email valid";
         END IF;
     END;
 //
