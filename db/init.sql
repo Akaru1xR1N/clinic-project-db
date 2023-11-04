@@ -368,7 +368,11 @@ CREATE TRIGGER useItem BEFORE INSERT ON tb_useItem
         DECLARE serviceType SMALLINT UNSIGNED DEFAULT (SELECT typeID FROM tb_reqTime WHERE doctorID=NEW.doctorID AND startTime=initTime);
         SET NEW.typeID = serviceType;
 
-        UPDATE tb_storage SET amount = amount-NEW.amount WHERE productID=NEW.productID;
+        IF NEW.typeID IS NULL THEN
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "You can not use item if you are not working.";
+        ELSE
+            UPDATE tb_storage SET amount = amount-NEW.amount WHERE productID=NEW.productID;
+        END IF;
     END;
 //
 delimiter ;
