@@ -75,7 +75,7 @@
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
 |get   |/owner     |/list          |get owner list        |                                -                             |{ownerID,name,surname,nationalID,email}|                |
 |post  |/owner     |/auth          |owner auth            |*{email, password}                                            |{ownerID,name,surname,nationalID,email}|                |
-|post  |/owner     |/order         |Order item            |*{email, password}                                            |{ownerID,name,surname,nationalID,email}|                |
+|post  |/owner     |/order         |Order item            |*{email, password}                                            |                 message              |                |
 
 ## admin
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -86,7 +86,7 @@
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
 |get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
 |post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{adminID,name,surname,nationalID,email}|                |
-|post  |/admin     |/order         |Order item            |*{email, password}                                            |{adminID,name,surname,nationalID,email}|                |
+|post  |/admin     |/order         |Order item            |*{email, password}                                            |                 message              |                 |
 
 ## doctor
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -95,10 +95,13 @@
 |put   |/doctor    |/              |update doctor info    |*{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|  message          |                 |
 |get   |/doctor    |/              |get doctor info       |*{doctorID}                                                   |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
 |get   |/doctor    |/list          |get all doctor in clinic|*{clinicID}                                                 |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
-|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                   |                 message             |                  |
+|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                   |                 message              |                  |
 |get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |post  |/doctor    |/acceptRequestTime|Accept service request time from customer|*{doctorID,clinicID,customerID,typeID,startTime}|          message             |                 |
 |post  |/doctor    |/auth          |doctor auth           |*{email, password}                                            |{doctorID,name,surname,nationalID,email}|               |
+|get   |/doctor    |/viewHistoryAndEvaluate|View history and evaluate|*{doctorID}                                        |[doctorID,customerID,typeID,score,comment,time]|        |
+|post  |/doctor    |/useItem       |Use item              |*{doctorID,productID,amount}                                  |                  message             |                 |
+|post  |/doctor    |/treatFinish   |Finish the treat      |*{doctorID}                                                   |                  message             |                 |
 
 ## customer
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
