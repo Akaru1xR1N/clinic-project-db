@@ -293,4 +293,41 @@ router.delete("/serviceRequest", async (req, res) => {
     }
 })
 
+// customer auth
+router.post("/auth", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        email: null,
+        password: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+    let hashPassword = crypto.pbkdf2Sync(input.password, saltDB, 1000, 64, "sha512").toString("hex")
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT customerID, name, surname, nationalID, email FROM tb_customer WHERE email=? AND password=?", [input.email, hashPassword])
+        if (!result.length) throw new Error("Something went wrong")
+        if (!result[0][0]) throw new Error("Username or password invalid.")
+
+        return res.send({error: false, message: "Auth complete.", data: result[0][0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
 module.exports = router

@@ -72,6 +72,7 @@
 |delete|/owner     |/              |delete owner          |*{ownerID}                                                    |                 message              |                 |
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
 |get   |/owner     |/list          |get owner list        |                                -                             |{ownerID,name,surname,nationalID,email}|                |
+|post  |/owner     |/auth          |owner auth            |*{email, password}                                            |{ownerID,name,surname,nationalID,email}|                |
 
 ## admin
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -81,17 +82,19 @@
 |delete|/admin     |/              |delete admin          |*{adminID}                                                    |                 message              |                 |
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
 |get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
+|post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{adminID,name,surname,nationalID,email}|                |
 
 ## doctor
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
 |post  |/doctor    |/              |Add doctor            |*{clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|       message              |                 |
 |put   |/doctor    |/              |update doctor info    |*{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|  message          |                 |
-|get   |/doctor    |/              |get doctor info       |*{doctorID}                                                    |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
-|get   |/doctor    |/list          |get all doctor in clinic|*{clinicID}                                                  |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
-|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                    |                 message             |                 |
-|get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                          |[clinicID,customerID,typeID,doctorID,startTime]|       |
+|get   |/doctor    |/              |get doctor info       |*{doctorID}                                                   |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
+|get   |/doctor    |/list          |get all doctor in clinic|*{clinicID}                                                 |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
+|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                   |                 message             |                  |
+|get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |post  |/doctor    |/acceptRequestTime|Accept service request time from customer|*{doctorID,clinicID,customerID,typeID,startTime}|          message             |                 |
+|post  |/doctor    |/auth          |doctor auth           |*{email, password}                                            |{doctorID,name,surname,nationalID,email}|               |
 
 ## customer
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -102,6 +105,7 @@
 |get   |/customer  |/list          |get all customer      |                                -                             |[customerID,name,surname,gender,phone]|                 |
 |post  |/customer  |/serviceRequest|Add customer service request|*{clinicID,customerID,typeID,startTime}                 |                  message             |                 |
 |delete|/customer  |/serviceRequest|Delete customer service request|*{clinicID,customerID,typeID,startTime}              |                  message             |                 |
+|post  |/customer  |/auth          |customer auth         |*{email, password}                                            |{customerID,name,surname,nationalID,email}|             |
 
 ## location
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
