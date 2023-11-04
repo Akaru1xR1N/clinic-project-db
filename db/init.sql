@@ -405,8 +405,12 @@ CREATE TRIGGER approveToTimetable AFTER UPDATE ON tb_reqTime
     BEGIN
         DECLARE currentTime DATETIME DEFAULT CURRENT_TIMESTAMP();
         DECLARE durationTime TIME DEFAULT (SELECT duration FROM tb_serviceType WHERE typeID=NEW.typeID);
-
-        INSERT INTO tb_timetable (doctorID, startTime, endTime) VALUES (NEW.doctorID, NEW.startTime, TIMESTAMPADD(MINUTE, TIMESTAMPDIFF(MINUTE, CONCAT(YEAR(currentTime),"-",MONTH(currentTime),"-",DAY(currentTime)," 00:00:00"), CONCAT(YEAR(currentTime),"-",MONTH(currentTime),"-",DAY(currentTime), " ", durationTime)), NEW.startTime));
+        DECLARE valid MEDIUMINT DEFAULT (SELECT doctorID FROM tb_timetable WHERE NEW.startTime BETWEEN startTime AND endTime AND doctorID=NEW.doctorID);
+        IF valid IS NULL THEN
+            INSERT INTO tb_timetable (doctorID, startTime, endTime) VALUES (NEW.doctorID, NEW.startTime, TIMESTAMPADD(MINUTE, TIMESTAMPDIFF(MINUTE, CONCAT(YEAR(currentTime),"-",MONTH(currentTime),"-",DAY(currentTime)," 00:00:00"), CONCAT(YEAR(currentTime),"-",MONTH(currentTime),"-",DAY(currentTime), " ", durationTime)), NEW.startTime));
+        ELSE
+            SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "You are busy in that time.";
+        END IF;
     END;
 //
 delimiter ;
