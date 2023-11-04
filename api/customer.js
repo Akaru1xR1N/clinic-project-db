@@ -315,11 +315,113 @@ router.post("/auth", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT customerID, name, surname, nationalID, email FROM tb_customer WHERE email=? AND password=?", [input.email, hashPassword])
+        const result = await con.query("SELECT customerID, name, surname, nationalID, email FROM tb_customer WHERE email=? AND password=?;", [input.email, hashPassword])
         if (!result.length) throw new Error("Something went wrong")
         if (!result[0][0]) throw new Error("Username or password invalid.")
 
         return res.send({error: false, message: "Auth complete.", data: result[0][0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// view own customer request
+router.get("/viewRequestTime", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        customerID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_reqTime WHERE doctorID IS NULL AND customerID=?;", [input.customerID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get request time complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// view own customer request approve
+router.get("/viewRequestTimeApprove", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        customerID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_reqTime WHERE doctorID IS NOT NULL AND customerID=?;", [input.customerID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get request time approve complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// view history and evaluate
+router.get("/viewHistoryAndEvaluate", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        customerID: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.query[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.query[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("SELECT * FROM tb_historyEvaluate WHERE customerID=?;", [input.customerID])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Get history and evaluate complete", data:result[0]})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)

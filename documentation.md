@@ -106,6 +106,9 @@
 |post  |/customer  |/serviceRequest|Add customer service request|*{clinicID,customerID,typeID,startTime}                 |                  message             |                 |
 |delete|/customer  |/serviceRequest|Delete customer service request|*{clinicID,customerID,typeID,startTime}              |                  message             |                 |
 |post  |/customer  |/auth          |customer auth         |*{email, password}                                            |{customerID,name,surname,nationalID,email}|             |
+|get   |/customer  |/viewRequestTime|View own request time|*{customerID}                                                 |[clinicID,customerID,typeID,startTime]|                 |
+|get   |/customer  |/viewRequestTimeApprove|View own request time approve|*{customerID}                                  |[clinicID,customerID,typeID,doctorID,startTime]|        |
+|get   |/customer  |/viewHistoryAndEvaluate|View history and evaluate|*{customerID}                                      |[doctorID,customerID,typeID,score,comment,time]|        |
 
 ## location
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
