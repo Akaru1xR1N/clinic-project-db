@@ -65,6 +65,7 @@
 |get   |/clinic    |/service/type/unused|Get list service type unused|           *{clinicID}                             |[typeID,categoryID,clinicID,typeName,duration,price,inUsed]| |
 |get   |/clinic    |/storage|Get all item in storage      |                      *{clinicID}                             |[productID,clinicID,productName,amount]|                |
 |get   |/clinic    |/useItemHistory|Get use item history  |                      *{clinicID}                       |[doctorID,productID,clinicID,typeID,amount,time,productName]| |
+|get   |/clinic    |/items         |Show all available items|                         -                                  |[itemID,itemName,price]|                                |
 
 ## owner
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
