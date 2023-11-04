@@ -311,7 +311,7 @@ router.post("/acceptRequestTime", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("UPDATE tb_reqTime set doctorID=? where clinicID=? and customerID=? and typeID=? and startTime=?;",
+        const result = await con.query("UPDATE tb_reqTime SET doctorID=? WHERE clinicID=? AND customerID=? AND typeID=? AND startTime=?;",
         [input.doctorID, input.clinicID, input.customerID, input.typeID, input.startTime])
         if (!result.length) throw new Error("Something went wrong")
 
@@ -348,7 +348,7 @@ router.post("/auth", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT doctorID, name, surname, nationalID, email FROM tb_doctor WHERE email=? AND password=?", [input.email, hashPassword])
+        const result = await con.query("SELECT doctorID, name, surname, nationalID, email FROM tb_doctor WHERE email=? AND password=?;", [input.email, hashPassword])
         if (!result.length) throw new Error("Something went wrong")
         if (!result[0][0]) throw new Error("Username or password invalid.")
 
