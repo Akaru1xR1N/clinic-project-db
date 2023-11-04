@@ -283,4 +283,42 @@ router.post("/auth", async (req, res) => {
     }
 })
 
+// order item
+router.post("/order", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        adminID: null,
+        clinicID: null,
+        itemID: null,
+        amount: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("INSERT INTO tb_orderItem (adminID, clinicID, itemID, amount) VALUES (?, ?, ?, ?);",
+        [input.adminID, input.clinicID, input.itemID, input.amount])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Order item complete."})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
 module.exports = router
