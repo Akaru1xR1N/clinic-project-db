@@ -74,8 +74,8 @@
 |delete|/owner     |/              |delete owner          |*{ownerID}                                                    |                 message              |                 |
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
 |get   |/owner     |/list          |get owner list        |                                -                             |{ownerID,name,surname,nationalID,email}|                |
-|post  |/owner     |/auth          |owner auth            |*{email, password}                                            |{ownerID,name,surname,nationalID,email}|                |
-|post  |/owner     |/order         |Order item            |*{email, password}                                            |                 message              |                |
+|post  |/owner     |/auth          |owner auth            |*{email,password}                                            |{ownerID,name,surname,nationalID,email}|                |
+|post  |/owner     |/order         |Order item            |*{ownerID,clinicID,itemID,amount}                             |                 message              |                |
 
 ## admin
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -86,7 +86,7 @@
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
 |get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
 |post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{adminID,name,surname,nationalID,email}|                |
-|post  |/admin     |/order         |Order item            |*{email, password}                                            |                 message              |                 |
+|post  |/admin     |/order         |Order item            |*{adminID,clinicID,itemID,amount}                             |                 message              |                 |
 
 ## doctor
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
