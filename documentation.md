@@ -47,8 +47,6 @@
 |get   |/clinic    |/              |get clinic info       |*{clinicID}                                                   |{clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail}| |
 |get   |/clinic    |/inused        |get clinic inused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
 |get   |/clinic    |/unused        |get clinic unused list|                                -                             |[clinicID,name,province,amphure,tambon,place,totalMoney,createDate,detail]| |
-|get   |/clinic    |/statement     |get clinic statement  |*{clinicID, year, month}                                      |[clinicID,time,value,type]            |                 |
-|get   |/clinic    |/totalStatement|get total money clinic statement per month|*{clinicID, year, month}                  |{value}                               |                 |
 |post  |/clinic    |/service/category|Add service category|*{categoryName}                                               |                  message             |                 |
 |put   |/clinic    |/service/category|Update service category|*{categoryID,categoryName,inUsed}                          |                  message             |                 |
 |delete|/clinic    |/service/category|delete service category|*{categoryID}                                              |                  message             |change state to unused if delete again it will delete all info about service category|
@@ -127,6 +125,13 @@
 |post  |/upload    |/license/:filename?doctorID=?|Add photo or edit  |*{filename,doctorID}                               |      message      |if filename is null then send null  |
 |get   |/upload    |/face/:filename|Get face image        |*{filename}                                                   |                   message            |                 |
 |get   |/upload    |/license/:filename|Get license image  |*{filename}                                                   |                   message            |                 |
+
+## summary
+|method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
+|:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
+|get   |/summary   |/statement     |get clinic statement  |*{clinicID, year, month}                                      |[clinicID,time,value,type]            |                 |
+|get   |/summary   |/totalStatement|get total money clinic statement per month|*{clinicID, year, month}                  |                   value              |                 |
+|get   |/summary   |/totalCase     |Get how many case per month per clinic|*{clinicID,year}                              |[Ccase,month]                         |                 |
 
 ## location
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |

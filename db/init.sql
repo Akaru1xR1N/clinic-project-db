@@ -556,7 +556,7 @@ CREATE PROCEDURE sp_changeStateBringBackServiceType(IN tID SMALLINT UNSIGNED)
 delimiter ;
 
 /***************************************************************
---               Get total money per month
+--  UNUSED             Get total money per month
 ***************************************************************/
 
 -- procedure get total money per month
