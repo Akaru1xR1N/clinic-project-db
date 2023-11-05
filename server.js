@@ -19,6 +19,7 @@ const admin = require("./api/admin")
 const doctor = require("./api/doctor")
 const customer = require("./api/customer")
 const location = require("./api/location")
+const upload = require("./api/upload")
 
 if (!fs.existsSync("log")){
     fs.mkdirSync("log")
@@ -69,6 +70,7 @@ app.use("/admin", admin)
 app.use("/doctor", doctor)
 app.use("/customer", customer)
 app.use("/location", location)
+app.use("/upload", upload)
 
 app.get("/", async (req, res) => {
     return res.send({

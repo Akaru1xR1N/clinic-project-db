@@ -118,6 +118,14 @@
 |get   |/customer  |/viewRequestTimeApprove|View own request time approve|*{customerID}                                  |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |get   |/customer  |/viewHistoryAndEvaluate|View history and evaluate|*{customerID}                                      |[doctorID,customerID,typeID,score,comment,time]|        |
 
+## upload
+|method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
+|:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|
+|post  |/upload    |/face/:filename?doctorID=?|Add photo or edit     |*{filename,doctorID}                               |      message      |if filename is null then send null  |
+|post  |/upload    |/license/:filename?doctorID=?|Add photo or edit  |*{filename,doctorID}                               |      message      |if filename is null then send null  |
+|get   |/upload    |/face/:filename|Get face image        |*{filename}                                                   |                   message            |                 |
+|get   |/upload    |/license/:filename|Get license image  |*{filename}                                                   |                   message            |                 |
+
 ## location
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
 |:----:|:---------:|:-------------:|:--------------------:|:------------------------------------------------------------:|:------------------------------------:|:---------------:|

@@ -16,6 +16,7 @@
     "express": "^4.18.2",
     "ip": "^1.1.8",
     "moment": "^2.29.4",
+    "multer": "1.4.5-lts.1",
     "mysql2": "^3.6.1",
     "mysqldump": "^3.2.0",
     "node-cron": "^3.0.2",
