@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 
 function AdminUserAddDoctor() {
@@ -16,6 +16,15 @@ function AdminUserAddDoctor() {
     const [ConfirmPassword, setConfirmPassword] = useState("");
     const [Email, setEmail] = useState("");
     const [data, setData] = useState("");
+
+    useEffect(() => {
+        const isAdminLogined = localStorage.getItem('isAdminLogined');
+
+        if (isAdminLogined !== 'true') {
+            // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
+            window.location.href = '/admin/login';
+        }
+    }, [])
 
     const ToUserManagement = () => {
         window.location.href = '/admin/user/management';
@@ -44,6 +53,7 @@ function AdminUserAddDoctor() {
         };
 
         try {
+            console.log(newDoctor);
             await axios.post(process.env.REACT_APP_API_URL + 'doctor', newDoctor);
             setData([...data, newDoctor]);
             await Swal.fire({
@@ -113,9 +123,8 @@ function AdminUserAddDoctor() {
                         value={Gender}
                     >
                         <option value={""}>---โปรดระบุเพศ---</option>
-                        <option value={"หญิง"}>หญิง</option>
-                        <option value={"ชาย"}>ชาย</option>
-                        <option value={"ไม่ระบุ"}>ไม่ระบุ</option>
+                        <option value={"F"}>หญิง</option>
+                        <option value={"M"}>ชาย</option>
                     </select>
                 </div>
                 <div className=' grid pb-4'>

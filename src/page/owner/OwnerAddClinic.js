@@ -28,6 +28,13 @@ function OwnerAddClinic() {
     };
 
     useEffect(() => {
+        const isOwnerLogined = localStorage.getItem('isOwnerLogined');
+
+        if (isOwnerLogined !== 'true') {
+            // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
+            window.location.href = '/owner/login';
+        }
+
         const fetchData = async () => {
             try {
                 const response = await axios.get(process.env.REACT_APP_API_URL + '/location');
@@ -47,7 +54,7 @@ function OwnerAddClinic() {
         const getCurrentDate = () => {
             const today = new Date();
             const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2,'0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
             const formattedDate = `${year}-${month}-${day}`;
             return formattedDate;
@@ -75,7 +82,7 @@ function OwnerAddClinic() {
             }
         }
     };
-    
+
     const onchangeAmphures = async (AmphuresAPI) => {
         setAmphures(AmphuresAPI.amphureName);
         if (AmphuresAPI) {
@@ -134,7 +141,7 @@ function OwnerAddClinic() {
         }
     };
 
-    
+
 
     return (
         <div>

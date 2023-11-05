@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginNavbar from './LoginNavbar';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAdmin } from '../contexts/AdminContext';
 
 const AdminLogin = () => {
-    const [email, setEmail] = useState('AdminTestLogin01@gmail.com');
-    const [password, setPassword] = useState('testlogin01');
+    localStorage.setItem('isAdminLogined', 'false');
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const { setAdminDetail } = useAdmin();
+
+    useEffect(() => {
+        setAdminDetail(null);
+    }, []);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -16,17 +28,27 @@ const AdminLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email === 'AdminTestLogin01@gmail.com' && password === 'testlogin01') {
+
+        const LoginData = {
+            email: email,
+            password: password,
+        }
+
+        try {
+            const { data } = await axios.post(process.env.REACT_APP_API_URL + 'admin/auth', LoginData);
+            setAdminDetail(data.data);
             await Swal.fire({
                 title: 'Login Complete!',
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 1500
-            });
+            })
             localStorage.setItem('isAdmin', true);
             localStorage.setItem('isOwner', false);
-            window.location.href = '/admin/Home';
-        } else {
+            localStorage.setItem('isCustomer', false);
+            localStorage.setItem('isAdminLogined', 'true');
+            navigate('/admin/Home', { state: { isAdminLogined: true } });
+        } catch (error) {
             Swal.fire({
                 title: 'Login fail',
                 icon: 'error',
@@ -35,7 +57,6 @@ const AdminLogin = () => {
             });
         }
     };
-    
 
     return (
         <div>

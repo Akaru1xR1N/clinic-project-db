@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -13,6 +13,15 @@ function AdminUserAddAdmin() {
     const [ConfirmPassword, setConfirmPassword] = useState("");
     const [Email, setEmail] = useState("");
     const [data, setData] = useState("");
+
+    useEffect(() => {
+        const isAdminLogined = localStorage.getItem('isAdminLogined');
+
+        if (isAdminLogined !== 'true') {
+            // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
+            window.location.href = '/admin/login';
+        }
+    }, [])
 
     const ToUserManagement = () => {
         window.location.href = '/admin/user/management';

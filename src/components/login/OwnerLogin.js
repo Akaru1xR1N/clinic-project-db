@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import LoginNavbar from './LoginNavbar';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const OwnerLogin = () => {
-    const [email, setEmail] = useState('OwnerTestLogin01@gmail.com');
-    const [password, setPassword] = useState('testlogin01');
+    localStorage.setItem('isOwnerLogined', 'false');
+
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [data, setData] = useState('');
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -16,18 +23,27 @@ const OwnerLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // ตรวจสอบ email และ password ที่ได้จาก state แล้วดำเนินการต่อไป
-        if (email === 'OwnerTestLogin01@gmail.com' && password === 'testlogin01') {
+
+        const LoginData = {
+            email: email,
+            password: password,
+        }
+
+        try {
+            await axios.post(process.env.REACT_APP_API_URL + 'owner/auth', LoginData);
+            setData([...data, LoginData]);
             await Swal.fire({
                 title: 'Login Complete!',
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 1500
-            });
+            })
             localStorage.setItem('isOwner', true);
             localStorage.setItem('isAdmin', false);
-            window.location.href = '/owner/Home'
-        } else {
+            localStorage.setItem('isCustomer', false);
+            localStorage.setItem('isOwnerLogined', 'true');
+            navigate('/owner/Home', { state: { isOwnerLogined: true } });
+        } catch (error) {
             Swal.fire({
                 title: 'Login fail',
                 icon: 'error',

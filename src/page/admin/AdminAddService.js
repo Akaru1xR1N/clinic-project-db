@@ -2,16 +2,16 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
 import Swal from 'sweetalert2';
 
-function OwnerAddService() {
+function AdminAddService() {
+
+    const [clinicID, setClinicID] = useState('1');
 
     const [categoryName, setCategoryName] = useState('');
     const [newCategory, setNewCategoryName] = useState('');
     const [categoryData, setCategoryData] = useState('');
     const [categoryID, setCategoryID] = useState('');
-    const [clinicID, setClinicID] = useState('');
     const [typeName, setTypeName] = useState('');
     const [duration, setDuration] = useState('');
     const [price, setPrice] = useState('');
@@ -43,11 +43,11 @@ function OwnerAddService() {
     };
 
     useEffect(() => {
-        const isOwnerLogined = localStorage.getItem('isOwnerLogined');
+        const isAdminLogined = localStorage.getItem('isAdminLogined');
 
-        if (isOwnerLogined !== 'true') {
+        if (isAdminLogined !== 'true') {
             // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
-            window.location.href = '/owner/login';
+            window.location.href = '/admin/login';
         }
 
         const fetchDataInuesdTable = async () => {
@@ -89,27 +89,9 @@ function OwnerAddService() {
             }
         };
 
-        const fetchClinicData = async () => {
-            try {
-                const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/inused');
-                const responseData = response.data;
-                if (!responseData.error) {
-                    const options = responseData.data.map(clinic => ({
-                        value: clinic.clinicID,
-                        label: clinic.name,
-                        clinicID: clinic.clinicID
-                    }))
-                    setSelectClinic(options);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchDataInuesdTable();
         fetchDataUnuesdTable();
         fetchSelectData();
-        fetchClinicData();
     }, [deleted, closed, categoryName, opened, edited]);
 
     const renderInusedTableRows = (InusedCategory) => {
@@ -364,10 +346,6 @@ function OwnerAddService() {
         setCategoryID(selectCategory.categoryID);
     };
 
-    const onchangeClinic = async (selectClinic) => {
-        setClinicID(selectClinic.clinicID);
-    };
-
     const addServiceType = async () => {
         const regex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
 
@@ -400,7 +378,7 @@ function OwnerAddService() {
                 showConfirmButton: false,
                 timer: 1000
             });
-            window.location.href = '/owner/service';
+            window.location.href = '/admin/service';
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -412,7 +390,7 @@ function OwnerAddService() {
     };
 
     const ToServicePage = () => {
-        window.location.href = '/owner/service';
+        window.location.href = '/admin/service';
     };
 
     return (
@@ -484,7 +462,7 @@ function OwnerAddService() {
                             <div className=' grid pb-4'>
                                 <table className=' table-auto'>
                                     <thead style={{
-                                        backgroundColor: '#FFB2B2',
+                                        backgroundColor: '#FFD7B2',
                                         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
                                     }}>
                                         <tr>
@@ -516,7 +494,7 @@ function OwnerAddService() {
                             <div className=' grid mb-4'>
                                 <table className=' table-auto'>
                                     <thead style={{
-                                        backgroundColor: '#FFB2B2',
+                                        backgroundColor: '#FFD7B2',
                                         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
                                     }}>
                                         <tr>
@@ -536,19 +514,11 @@ function OwnerAddService() {
             <div>
                 <h2 className=' text-3xl font-normal text-center p-7'>ประเภทของบริการ</h2>
                 <div className=' grid pb-4'>
-                    <span className=' text-xl font-normal mb-4'>สาขา</span>
-                    <Select className=' border-2 border-black rounded-full w-2/5 py-3 px-6'
-                        options={selectClinic}
-                        onChange={onchangeClinic}
-                        placeholder='---โปรดระบุชื่อสาขา---'>
-                    </Select>
-                </div>
-                <div className=' grid pb-4'>
                     <span className=' text-xl font-normal mb-4'>หมวดหมู่</span>
                     <Select className=' border-2 border-black rounded-full w-2/5 py-3 px-6'
                         options={selectCategory}
                         onChange={onchangeCategory}
-                        placeholder='---โปรดระบุชื่อสาขา---'>
+                        placeholder='---โปรดระบุชื่อหมวดหมู่---'>
                     </Select>
                 </div>
                 <div className=' grid pb-4'>
@@ -592,4 +562,4 @@ function OwnerAddService() {
     )
 }
 
-export default OwnerAddService
+export default AdminAddService

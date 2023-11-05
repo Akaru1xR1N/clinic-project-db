@@ -3,7 +3,7 @@ import React from 'react'
 function LoginNavbar() {
 
     const ToCustomerLogin = () => {
-        window.location.href = '/';
+        window.location.href = '/Login';
     };
 
     const ToOwnerLogin = () => {

@@ -6,6 +6,9 @@ import Login from './components/login/Login'
 import OwnerLogin from './components/login/OwnerLogin'
 import AdminLogin from './components/login/AdminLogin'
 import DoctorLogin from './components/login/DoctorLogin'
+import Signup from './components/login/Signup'
+
+import { AdminProvider } from './components/contexts/AdminContext'
 
 //general
 import HomePage from './page/general/HomePage'
@@ -20,6 +23,13 @@ import AdminUserManageMent from './page/admin/AdminUserManagementPage'
 import AdminUserAddAdmin from './page/admin/AdminUserAddAdmin'
 import AdminUserEditAdmin from './page/admin/AdminUserEditAdmin'
 import AdminUserAddDoctor from './page/admin/AdminUserAddDoctor'
+import AdminUserEditDoctor from './page/admin/AdminUserEditDoctor'
+import AdminServicePage from './page/admin/AdminServicePage'
+import AdminAddService from './page/admin/AdminAddService'
+import AdminEditService from './page/admin/AdminEditService'
+import AdminOrderPage from './page/admin/AdminOrderPage'
+import AdminStoragesPage from './page/admin/AdminStoragesPage'
+import AdminAddOrder from './page/admin/AdminAddOrder'
 
 
 //doctor
@@ -37,12 +47,18 @@ import OwnerEditAdmin from './page/owner/OwnerEditAdmin'
 import OwnerServicePage from './page/owner/OwnerServicePage'
 import OwnerAddService from './page/owner/OwnerAddService'
 import OwnerEditService from './page/owner/OwnerEditService'
+import OwnerOrderPage from './page/owner/OwnerOrderPage'
+import OwnerStoragesPage from './page/owner/OwnerStoragesPage'
 
 const routes = [
   //Login
   {
-    path: '/',
+    path: '/login',
     element: <Login />
+  },
+  {
+    path: '/signup',
+    element: <Signup />
   },
   {
     path: '/owner/login',
@@ -93,6 +109,34 @@ const routes = [
   {
     path: '/admin/user/add/doctor',
     element: <AdminUserAddDoctor />
+  },
+  {
+    path: '/admin/user/edit/doctor/:doctorID/*',
+    element: <AdminUserEditDoctor />
+  },
+  {
+    path: '/admin/service',
+    element: <AdminServicePage />
+  },
+  {
+    path: '/admin/add/service',
+    element: <AdminAddService />
+  },
+  {
+    path: '/admin/edit/service/:typeID/*',
+    element: <AdminEditService />
+  },
+  {
+    path: '/admin/order',
+    element: <AdminOrderPage />
+  },
+  {
+    path: '/admin/storage',
+    element: <AdminStoragesPage />
+  },
+  {
+    path: '/admin/add/order',
+    element: <AdminAddOrder />
   },
 
   //doctor
@@ -145,20 +189,30 @@ const routes = [
   {
     path: '/owner/edit/service/:typeID/*',
     element: <OwnerEditService />
-  }
+  },
+  {
+    path: '/owner/order',
+    element: <OwnerOrderPage />
+  },
+  {
+    path: '/owner/storage',
+    element: <OwnerStoragesPage />
+  },
 ]
 
 function App() {
   return (
     <Router>
-      <AppContent />
+      <AdminProvider>
+        <AppContent />
+      </AdminProvider>
     </Router>
   );
 }
 
 function AppContent() {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/' || location.pathname === '/owner/login' || location.pathname === '/admin/login' || location.pathname === '/doctor/login';
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/owner/login' || location.pathname === '/admin/login' || location.pathname === '/doctor/login' || location.pathname === '/signup';
 
   const contentStyle = {
     marginLeft: isLoginPage ? '0' : '250px', // ถ้าเป็นหน้า Login กำหนด marginLeft เป็น 0 ไม่มี margin

@@ -20,6 +20,13 @@ function OwnerEditOwner() {
     };
 
     useEffect(() => {
+        const isOwnerLogined = localStorage.getItem('isOwnerLogined');
+
+        if (isOwnerLogined !== 'true') {
+            // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
+            window.location.href = '/owner/login';
+        }
+
         const fetchdata = async () => {
             try {
                 const { data } = await axios.get(process.env.REACT_APP_API_URL + 'owner', { params: { ownerID } });
