@@ -86,7 +86,7 @@
 |delete|/admin     |/              |delete admin          |*{adminID}                                                    |                 message              |                 |
 |get   |/admin     |/              |get admin info        |*{adminID}                                                    |{clinicID,adminID,name,surname,nationalID,email}|       |
 |get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
-|post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{adminID,name,surname,nationalID,email}|                |
+|post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{clinicID,adminID,name,surname,nationalID,email}|       |
 |post  |/admin     |/order         |Order item            |*{adminID,clinicID,itemID,amount}                             |                 message              |                 |
 
 ## doctor
