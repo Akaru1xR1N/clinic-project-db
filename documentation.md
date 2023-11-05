@@ -75,8 +75,9 @@
 |delete|/owner     |/              |delete owner          |*{ownerID}                                                    |                 message              |                 |
 |get   |/owner     |/              |get owner info        |*{ownerID}                                                    |{ownerID,name,surname,nationalID,email}|                |
 |get   |/owner     |/list          |get owner list        |                                -                             |{ownerID,name,surname,nationalID,email}|                |
-|post  |/owner     |/auth          |owner auth            |*{email,password}                                            |{ownerID,name,surname,nationalID,email}|                |
-|post  |/owner     |/order         |Order item            |*{ownerID,clinicID,itemID,amount}                             |                 message              |                |
+|post  |/owner     |/auth          |owner auth            |*{email,password}                                             |{ownerID,name,surname,nationalID,email}|                |
+|post  |/owner     |/order         |Order item            |*{ownerID,clinicID,itemID,amount}                             |                 message              |                 |
+|get   |/owner     |/orderHistory  |View order history    |                                -                             |[ownerID,clinicID,itemID,amount,time,totalPrice]|       |
 
 ## admin
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -88,6 +89,7 @@
 |get   |/admin     |/list          |get all admin in clinic|*{clinicID}                                                  |{clinicID,adminID,name,surname,nationalID,email}|       |
 |post  |/admin     |/auth          |admin auth            |*{email, password}                                            |{clinicID,adminID,name,surname,nationalID,email}|       |
 |post  |/admin     |/order         |Order item            |*{adminID,clinicID,itemID,amount}                             |                 message              |                 |
+|get   |/admin     |/orderHistory  |View order history    |                                -                             |[adminID,clinicID,itemID,amount,time,totalPrice]|       |
 
 ## doctor
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
