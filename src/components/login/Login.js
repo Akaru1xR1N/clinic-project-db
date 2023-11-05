@@ -5,13 +5,11 @@ import axios from 'axios';
 
 const Login = () => {
     const [nationalID, setNationalID] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [data, setData] = useState('');
 
     const handleNationalIDChange = (e) => {
         setNationalID(e.target.value);
-        setEmail(e.target.value);
     };
 
     const handlePasswordChange = (e) => {
@@ -22,7 +20,7 @@ const Login = () => {
         e.preventDefault();
 
         const LoginData = {
-            email: email,
+            nationalID: nationalID,
             password: password,
         }
 
@@ -70,7 +68,7 @@ const Login = () => {
                             </label>
                             <input
                                 required
-                                value={email}
+                                value={nationalID}
                                 onChange={handleNationalIDChange}
                                 className="mt-1 p-2 block w-full rounded-md border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="เลขประจำตัวประชาชน"

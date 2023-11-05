@@ -42,6 +42,7 @@ function Signup() {
         };
 
         try {
+            console.log(newCustomer);
             await axios.post(process.env.REACT_APP_API_URL + 'customer', newCustomer);
             setData([...data, newCustomer]);
             await Swal.fire({
