@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginNavbar from './LoginNavbar';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { useCustomer } from '../contexts/AdminContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    localStorage.setItem('isCustomerLogined', 'false');
+    const navigate = useNavigate();
+
     const [nationalID, setNationalID] = useState('');
     const [password, setPassword] = useState('');
-    const [data, setData] = useState('');
+
+    const { setCustomerDetail } = useCustomer();
+
+    useEffect(() => {
+        setCustomerDetail(null);
+    }, []);
 
     const handleNationalIDChange = (e) => {
         setNationalID(e.target.value);
@@ -25,8 +35,8 @@ const Login = () => {
         }
 
         try {
-            await axios.post(process.env.REACT_APP_API_URL + 'customer/auth', LoginData);
-            setData([...data, LoginData]);
+            const { data } = await axios.post(process.env.REACT_APP_API_URL + 'customer/auth', LoginData);
+            setCustomerDetail(data.data);
             await Swal.fire({
                 title: 'Login Complete!',
                 icon: 'success',
@@ -36,7 +46,8 @@ const Login = () => {
             localStorage.setItem('isCustomer', true);
             localStorage.setItem('isAdmin', false);
             localStorage.setItem('isOwner', false);
-            window.location.href = '/customer/Home';
+            localStorage.setItem('isCustomerLogined', 'true');
+            navigate('/customer/Home', { state: { isCustomerLogined: true } });
         } catch (error) {
             Swal.fire({
                 title: 'Login fail',

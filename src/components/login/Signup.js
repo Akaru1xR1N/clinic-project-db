@@ -51,7 +51,7 @@ function Signup() {
                 showConfirmButton: false,
                 timer: 1000
             });
-            window.location.href = '/';
+            window.location.href = '/login';
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -63,7 +63,7 @@ function Signup() {
     };
 
     const ToLogin = () => {
-        window.location.href = '/Login';
+        window.location.href = '/login';
     };
 
     return (

@@ -24,75 +24,70 @@ function AdminStoragesPage() {
       window.location.href = '/admin/login';
     }
 
-    const fetchClinicData = async () => {
+    const fetchStorageData = async () => {
       try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/inused');
-        const responseData = response.data;
-        if (!responseData.error) {
-          const options = responseData.data.map(clinic => ({
-            value: clinic.clinicID,
-            label: clinic.name,
-          }))
-          setClinicList(options);
+        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/storage', { params: { clinicID: adminDetail.clinicID } });
+        if (!data.error) {
+          setStorageList(data.data)
         }
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchClinicData();
+    const fetchUseItemHistoryData = async () => {
+      try {
+        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/useItemHistory', { params: { clinicID: adminDetail.clinicID } });
+        if (!data.error) {
+          setHistoryList(data.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchDoctorData = async () => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'doctor/list', { params: { clinicID: adminDetail.clinicID } });
+        const responseData = response.data;
+        if (!responseData.error) {
+          setDoctorList(responseData.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchServiceInusedData = async () => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/inused', { params: { clinicID: adminDetail.clinicID } });
+        const responseData = response.data;
+        if (!responseData.error) {
+          setServiceInused(responseData.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchServiceUnusedData = async () => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/unused', { params: { clinicID: adminDetail.clinicID } });
+        const responseData = response.data;
+        if (!responseData.error) {
+          setServiceUnused(responseData.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStorageData();
+    fetchUseItemHistoryData();
+    fetchDoctorData();
+    fetchServiceInusedData();
+    fetchServiceUnusedData();
   }, []);
-
-  const onchangeClinic = async (clinicList) => {
-    setIsTableVisible(true);
-    try {
-      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/storage', { params: { clinicID: clinicList.value } });
-      if (!data.error) {
-        setStorageList(data.data)
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    try {
-      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/useItemHistory', { params: { clinicID: clinicList.value } });
-      if (!data.error) {
-        setHistoryList(data.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    try {
-      const response = await axios.get(process.env.REACT_APP_API_URL + 'doctor/list', { params: { clinicID: clinicList.value } });
-      const responseData = response.data;
-      if (!responseData.error) {
-        setDoctorList(responseData.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    try {
-      const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/inused', { params: { clinicID: clinicList.value } });
-      const responseData = response.data;
-      if (!responseData.error) {
-        setServiceInused(responseData.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    try {
-      const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/unused', { params: { clinicID: clinicList.value } });
-      const responseData = response.data;
-      if (!responseData.error) {
-        setServiceUnused(responseData.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const renderStorageTableRows = (storageList) => {
     return storageList.map(storage => {
@@ -140,56 +135,44 @@ function AdminStoragesPage() {
       <h1 className=' text-4xl font-normal text-center p-7'>อุปกรณ์ในคลัง</h1>
       <div>
         <div>
-          <div className=' grid pb-4'>
-            <span className=' text-xl font-normal mb-4'>สาขา</span>
-            <Select className=' w-2/5'
-              options={clinicList}
-              onChange={onchangeClinic}
-              placeholder='---โปรดระบุชื่อสาขา---'>
-            </Select>
+          <div className=' grid pb-4 pt-4'>
+            <table className=' table-auto'>
+              <thead style={{
+                backgroundColor: '#FFD7B2',
+                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              }}>
+                <tr>
+                  <th style={{ textAlign: 'center' }}>ชื่ออุปกรณ์</th>
+                  <th style={{ textAlign: 'center' }}>จำนวน</th>
+                </tr>
+              </thead>
+              <tbody>
+                {renderStorageTableRows(storageList)}
+              </tbody>
+            </table>
+          </div>
+          <h2 className=' text-2xl font-normal mt-4'>ประวัติการใช้สินค้า</h2>
+          <div className=' grid pb-4 pt-4'>
+            <table className=' table-auto'>
+              <thead style={{
+                backgroundColor: '#FFD7B2',
+                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              }}>
+                <tr>
+                  <th style={{ textAlign: 'center' }}>วันที่ใช้</th>
+                  <th style={{ textAlign: 'center' }}>ชื่อบริการ</th>
+                  <th style={{ textAlign: 'center' }}>ชื่อ</th>
+                  <th style={{ textAlign: 'center' }}>นามสกุล</th>
+                  <th style={{ textAlign: 'center' }}>ชื่ออุปกรณ์</th>
+                  <th style={{ textAlign: 'center' }}>จำนวน</th>
+                </tr>
+              </thead>
+              <tbody>
+                {renderHistoryTableRows(historyList)}
+              </tbody>
+            </table>
           </div>
         </div>
-        {isTableVisible && (
-          <div>
-            <div className=' grid pb-4 pt-4'>
-              <table className=' table-auto'>
-                <thead style={{
-                  backgroundColor: '#FFD7B2',
-                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
-                }}>
-                  <tr>
-                    <th style={{ textAlign: 'center' }}>ชื่ออุปกรณ์</th>
-                    <th style={{ textAlign: 'center' }}>จำนวน</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {renderStorageTableRows(storageList)}
-                </tbody>
-              </table>
-            </div>
-            <h2 className=' text-2xl font-normal mt-4'>ประวัติการใช้สินค้า</h2>
-            <div className=' grid pb-4 pt-4'>
-              <table className=' table-auto'>
-                <thead style={{
-                  backgroundColor: '#FFD7B2',
-                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
-                }}>
-                  <tr>
-                    <th style={{ textAlign: 'center' }}>วันที่ใช้</th>
-                    <th style={{ textAlign: 'center' }}>ชื่อบริการ</th>
-                    <th style={{ textAlign: 'center' }}>ชื่อ</th>
-                    <th style={{ textAlign: 'center' }}>นามสกุล</th>
-                    <th style={{ textAlign: 'center' }}>ชื่ออุปกรณ์</th>
-                    <th style={{ textAlign: 'center' }}>จำนวน</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {renderHistoryTableRows(historyList)}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

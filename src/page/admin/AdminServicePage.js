@@ -1,11 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
+import { useAdmin } from '../../components/contexts/AdminContext';
 
 function AdminServicePage() {
 
+  const { adminDetail } = useAdmin();
+
   const [categoryID, setCategoryID] = useState('');
-  const [clinicID, setClinicID] = useState('1');
 
   const [serviceList, setServiceList] = useState([]);
   const [InusedCategory, setInusedCategory] = useState([]);
@@ -69,7 +71,7 @@ function AdminServicePage() {
     setIsServiceVisible(true);
     setCategoryID(categoryID);
     try {
-      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/inused', { params: { clinicID: clinicID } });
+      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/type/inused', { params: { clinicID: adminDetail.clinicID } });
       if (!data.error) {
         setServiceList(data.data);
       }

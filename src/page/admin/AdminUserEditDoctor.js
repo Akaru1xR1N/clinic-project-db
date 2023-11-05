@@ -7,8 +7,9 @@ function AdminUserEditDoctor() {
 
     const { doctorID } = useParams();
 
-    const [clinicID, setClinicID] = useState("1");
-    const [adminID, setAdminID] = useState("5");
+    const [clinicID, setClinicID] = useState("");
+    const [adminID, setAdminID] = useState("");
+
     const [Prefix, setPrefix] = useState('');
     const [Name, setName] = useState("");
     const [SurName, setSurName] = useState("");

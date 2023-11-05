@@ -80,6 +80,10 @@ function Sidebar() {
         }
     };
 
+    const ToRequestPage = () => {
+        window.location.href = '/customer/service/request';
+    };
+
     return (
         <div
             className={`min-h-full w-52 fixed left-0 top-0 p-4 text-black 
@@ -93,7 +97,7 @@ function Sidebar() {
                     <button onClick={ToOwnerHome} className={`hover:bg-white rounded ${isAdminActive('/admin/Home')}`}>หน้าแรก</button>
                     <button onClick={ToServicePage} className={`hover:bg-white rounded ${isAdminActive('/admin/service')}`}>บริการของเรา</button>
                     <button onClick={ToOrderPage} className={`hover:bg-white rounded } ${isAdminActive('/admin/order')}`}>คำสั่งซื้อ</button>
-                    <button onClick={ToStoragePage} className={`hover:bg-white rounded }`}>คลัง</button>
+                    <button onClick={ToStoragePage} className={`hover:bg-white rounded } ${isAdminActive('/admin/storage')}`}>คลัง</button>
                     <button onClick={ToUserManagement} className={`hover:bg-white rounded ${isAdminActive('/admin/user/management')}`}>จัดการผู้ใช้</button>
                 </div>
             )}
@@ -109,6 +113,7 @@ function Sidebar() {
             {isCustomer && (
                 <div className="flex flex-col space-y-4 text-center text-2xl font-normal pt-4">
                     <button onClick={ToOwnerHome} className={`hover:bg-white rounded ${isCustomerActive('/customer/Home')}`}>หน้าแรก</button>
+                    <button onClick={ToRequestPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service/request')}`}>คำขอของฉัน</button>
                 </div>
             )}
         </div>

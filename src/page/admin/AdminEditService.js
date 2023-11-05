@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 function AdminEditService() {
 
     const { typeID } = useParams();
-    const [clinicID, setClinicID] = useState('1');
+    const [clinicID, setClinicID] = useState('');
 
     const [CategoryID, setCategoryID] = useState('');
     const [TypeName, setTypeName] = useState('');

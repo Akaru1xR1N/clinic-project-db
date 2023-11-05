@@ -9,6 +9,8 @@ import DoctorLogin from './components/login/DoctorLogin'
 import Signup from './components/login/Signup'
 
 import { AdminProvider } from './components/contexts/AdminContext'
+import { OwnerProvider } from './components/contexts/AdminContext'
+import { CustomerProvider } from './components/contexts/AdminContext'
 
 //general
 import HomePage from './page/general/HomePage'
@@ -16,6 +18,7 @@ import AboutUsPage from './page/general/AboutUsPage'
 
 //customer
 import CustomerHomePage from './page/customer/CustomerHomePage'
+import CustomerIn_ProgressPage from './page/customer/CustomerIn_ProgressPage'
 
 //admin
 import AdminHomePage from './page/admin/AdminHomepage'
@@ -87,6 +90,10 @@ const routes = [
   {
     path: '/customer/Home',
     element: <CustomerHomePage />
+  },
+  {
+    path: '/customer/service/request',
+    element: <CustomerIn_ProgressPage />
   },
 
   //admin
@@ -203,9 +210,13 @@ const routes = [
 function App() {
   return (
     <Router>
-      <AdminProvider>
-        <AppContent />
-      </AdminProvider>
+      <OwnerProvider>
+        <AdminProvider>
+          <CustomerProvider>
+            <AppContent />
+          </CustomerProvider>
+        </AdminProvider>
+      </OwnerProvider>
     </Router>
   );
 }

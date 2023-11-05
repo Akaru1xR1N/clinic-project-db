@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState } from 'react';
 
 const AdminContext = createContext();
+const OwnerContext = createContext();
+const CustomerContext = createContext();
 
 export const AdminProvider = ({ children }) => {
     const [adminDetail, setAdminDetail] = useState(() => {
@@ -20,7 +22,50 @@ export const AdminProvider = ({ children }) => {
     );
 };
 
+export const OwnerProvider = ({ children }) => {
+    const [ownerDetail, setOwnerDetail] = useState(() => {
+        const storedOwnerDetail = localStorage.getItem('ownerDetail');
+        return storedOwnerDetail ? JSON.parse(storedOwnerDetail) : null;
+    });
+
+    const updateOwnerDetail = (newOwnerDetail) => {
+        setOwnerDetail(newOwnerDetail);
+        localStorage.setItem('ownerDetail', JSON.stringify(newOwnerDetail));
+    };
+
+    return (
+        <OwnerContext.Provider value={{ ownerDetail, setOwnerDetail: updateOwnerDetail }}>
+            {children}
+        </OwnerContext.Provider>
+    );
+};
+export const CustomerProvider = ({ children }) => {
+    const [customerDetail, setCustomerDetail] = useState(() => {
+        const storedCustomerDetail = localStorage.getItem('customerDetail');
+        return storedCustomerDetail ? JSON.parse(storedCustomerDetail) : null;
+    });
+
+    const updateCustomerDetail = (newCustomerDetail) => {
+        setCustomerDetail(newCustomerDetail);
+        localStorage.setItem('customerDetail', JSON.stringify(newCustomerDetail));
+    };
+
+    return (
+        <CustomerContext.Provider value={{ customerDetail, setCustomerDetail: updateCustomerDetail }}>
+            {children}
+        </CustomerContext.Provider>
+    );
+};
+
 
 export const useAdmin = () => {
     return useContext(AdminContext);
+};
+
+export const useOwner = () => {
+    return useContext(OwnerContext);
+};
+
+export const useCustomer = () => {
+    return useContext(CustomerContext);
 };

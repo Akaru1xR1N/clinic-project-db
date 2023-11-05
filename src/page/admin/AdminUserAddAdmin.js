@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useAdmin } from '../../components/contexts/AdminContext';
 
 function AdminUserAddAdmin() {
 
-    const [clinicID, setClinicID] = useState("");
+    const { adminDetail } = useAdmin();
 
     const [Name, setName] = useState("");
     const [SurName, setSurName] = useState("");
@@ -38,7 +39,7 @@ function AdminUserAddAdmin() {
             return;
         }
         const newAdmin = {
-            clinicID: clinicID,
+            clinicID: adminDetail.clinicID,
             name: Name,
             surname: SurName,
             nationalID: NationalID,
@@ -55,7 +56,7 @@ function AdminUserAddAdmin() {
                 showConfirmButton: false,
                 timer: 1000
             });
-            window.location.href = "/owner/user/management"
+            window.location.href = "/admin/user/management"
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -70,12 +71,6 @@ function AdminUserAddAdmin() {
         <div>
             <h1 className=' text-4xl font-normal text-center p-7'>เพิ่มผู้ดูแลระบบ</h1>
             <div>
-                <div className=' grid pb-4'>
-                    <span className=' text-xl font-normal mb-4'>สาขา</span>
-                    <input className=' border-2 border-black rounded-full w-2/5 py-3 px-6'
-                        value={clinicID}
-                    />
-                </div>
                 <div className=' grid pb-4'>
                     <span className=' text-xl font-normal mb-4'>ชื่อ</span>
                     <input className=' border-2 border-black rounded-full w-2/5 py-3 px-6'

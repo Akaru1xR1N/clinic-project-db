@@ -8,15 +8,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import { useCustomer } from '../../components/contexts/AdminContext';
 
 function CustomerHomePage() {
 
-  const [customerID, setCustomerID] = useState('2');
+  const { customerDetail } = useCustomer();
 
   const [categoryID, setCategoryID] = useState('');
   const [clinicID, setClinicID] = useState('');
   const [typeID, setTypeID] = useState('');
-  const [startTime, setStartTime] = useState('');
   const [data, setData] = useState('');
 
   const [clinicList, setClinicList] = useState([]);
@@ -39,6 +39,13 @@ function CustomerHomePage() {
   };
 
   useEffect(() => {
+    const isCustomerLogined = localStorage.getItem('isCustomerLogined');
+
+    if (isCustomerLogined !== 'true') {
+      // ถ้าไม่ได้ล็อกอินให้ redirect ไปยังหน้า login
+      window.location.href = '/login';
+    }
+
     const fetchCategoryInused = async () => {
       try {
         const { data } = await axios.get(process.env.REACT_APP_API_URL + 'clinic/service/category/inused');
@@ -135,7 +142,7 @@ function CustomerHomePage() {
 
     const newRequest = {
       clinicID: clinicID,
-      customerID: customerID,
+      customerID: customerDetail.customerID,
       typeID: typeID,
       startTime: formattedDate // เก็บเวลาในรูปแบบ ISO 8601
     };

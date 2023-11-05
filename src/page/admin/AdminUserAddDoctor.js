@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
+import { useAdmin } from '../../components/contexts/AdminContext';
 
 function AdminUserAddDoctor() {
 
-    const [clinicID, setClinicID] = useState("1");
-    const [adminID, setAdminID] = useState("5");
+    const { adminDetail } = useAdmin();
 
     const [Prefix, setPrefix] = useState('');
     const [Name, setName] = useState("");
@@ -41,8 +41,8 @@ function AdminUserAddDoctor() {
             return;
         }
         const newDoctor = {
-            clinicID: clinicID,
-            adminID: adminID,
+            clinicID: adminDetail.clinicID,
+            adminID: adminDetail.adminID,
             prefix: Prefix,
             name: Name,
             surname: SurName,
@@ -53,7 +53,6 @@ function AdminUserAddDoctor() {
         };
 
         try {
-            console.log(newDoctor);
             await axios.post(process.env.REACT_APP_API_URL + 'doctor', newDoctor);
             setData([...data, newDoctor]);
             await Swal.fire({
@@ -77,18 +76,6 @@ function AdminUserAddDoctor() {
         <div>
             <h1 className=' text-4xl font-normal text-center p-7'>เพิ่มหมอ</h1>
             <div>
-                <div className=' grid pb-4'>
-                    <span className=' text-xl font-normal mb-4'>สาขา</span>
-                    <input className=' border-2 border-black rounded-full w-2/5 py-3 px-6'
-                        value={clinicID}
-                    />
-                </div>
-                <div className=' grid pb-4'>
-                    <span className=' text-xl font-normal mb-4'>รหัสแอดมิน</span>
-                    <input className=' border-2 border-black rounded-full w-2/5 py-3 px-6'
-                        value={adminID}
-                    />
-                </div>
                 <div className=' grid pb-4'>
                     <span className=' text-xl font-normal mb-4'>คำนำหน้าชื่อ</span>
                     <input className=' border-2 border-black rounded-full w-2/5 py-3 px-6'

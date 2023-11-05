@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react'
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
 import Swal from 'sweetalert2';
+import { useAdmin } from '../../components/contexts/AdminContext';
 
 function AdminAddService() {
 
-    const [clinicID, setClinicID] = useState('1');
+    const { adminDetail } = useAdmin();
 
     const [categoryName, setCategoryName] = useState('');
     const [newCategory, setNewCategoryName] = useState('');
@@ -362,7 +363,7 @@ function AdminAddService() {
         }
 
         const newServiceType = {
-            clinicID: clinicID,
+            clinicID: adminDetail.clinicID,
             categoryID: categoryID,
             typeName: typeName,
             duration: duration,

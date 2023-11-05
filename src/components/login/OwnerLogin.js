@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginNavbar from './LoginNavbar';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useOwner } from '../contexts/AdminContext';
 
 const OwnerLogin = () => {
     localStorage.setItem('isOwnerLogined', 'false');
@@ -11,7 +12,12 @@ const OwnerLogin = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [data, setData] = useState('');
+
+    const { setOwnerDetail } = useOwner();
+
+    useEffect(() => {
+        setOwnerDetail(null);
+    }, []);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -30,8 +36,8 @@ const OwnerLogin = () => {
         }
 
         try {
-            await axios.post(process.env.REACT_APP_API_URL + 'owner/auth', LoginData);
-            setData([...data, LoginData]);
+            const { data } = await axios.post(process.env.REACT_APP_API_URL + 'owner/auth', LoginData);
+            setOwnerDetail(data.data);
             await Swal.fire({
                 title: 'Login Complete!',
                 icon: 'success',

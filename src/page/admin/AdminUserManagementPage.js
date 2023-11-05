@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useAdmin } from '../../components/contexts/AdminContext';
 
 function AdminUserManagementPage() {
 
-  const [clinicID, setClinicID] = useState('1');
+  const { adminDetail } = useAdmin();
 
   const [adminList, setAdminList] = useState([]);
   const [doctorList, setDoctorList] = useState([]);
@@ -26,7 +27,7 @@ function AdminUserManagementPage() {
 
     const fetchAdminData = async () => {
       try {
-        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'admin/list', { params: { clinicID: clinicID } });
+        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'admin/list', { params: { clinicID: adminDetail.clinicID } });
         if (!data.error) {
           setAdminList(data.data);
         }
@@ -37,7 +38,7 @@ function AdminUserManagementPage() {
 
     const fetchDoctorData = async () => {
       try {
-        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'doctor/list', { params: { clinicID: clinicID } });
+        const { data } = await axios.get(process.env.REACT_APP_API_URL + 'doctor/list', { params: { clinicID: adminDetail.clinicID } });
         if (!data.error) {
           setDoctorList(data.data);
         }
@@ -48,7 +49,7 @@ function AdminUserManagementPage() {
 
     fetchAdminData();
     fetchDoctorData();
-  }, [clinicID]);
+  }, []);
 
   const ToEditAdmin = (adminID) => {
     window.location.href = '/admin/user/edit/admin/' + adminID;
