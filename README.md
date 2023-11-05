@@ -25,7 +25,7 @@ This branch is the part of backend that includes
 ![setup](https://github.com/Akaru1xR1N/README.img/blob/master/setup.png "setup")
 ```sh
 pnpm init
-pnpm install crypto express mysql2 mysqldump body-parser cors winston winston-daily-rotate-file node-cron fs ip path moment
+pnpm install crypto express mysql2 mysqldump body-parser cors winston winston-daily-rotate-file node-cron fs ip path moment multer
 ```
 
 ## Setup detail
@@ -43,6 +43,7 @@ pnpm install crypto express mysql2 mysqldump body-parser cors winston winston-da
 * `ip` - to show ip address
 * `path` - path handler
 * `moment` - time handler
+* `multer` - upload file
 
 ## Clone project
 ![setup detail](https://github.com/Akaru1xR1N/README.img/blob/master/clone.png "setup detail")
