@@ -96,10 +96,10 @@
 |put   |/doctor    |/              |update doctor info    |*{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email}|  message          |                 |
 |get   |/doctor    |/              |get doctor info       |*{doctorID}                                                   |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
 |get   |/doctor    |/list          |get all doctor in clinic|*{clinicID}                                                 |{doctorID,clinicID,adminID,prefix,name,surname,gender,nationalID,password,email,licensePath,facePath}| |
-|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                   |                 message              |                  |
+|delete|/doctor    |/              |delete doctor         |*{doctorID}                                                   |                 message              |                 |
 |get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |post  |/doctor    |/acceptRequestTime|Accept service request time from customer|*{doctorID,clinicID,customerID,typeID,startTime}|          message             |                 |
-|post  |/doctor    |/auth          |doctor auth           |*{email, password}                                            |{doctorID,name,surname,nationalID,email}|               |
+|post  |/doctor    |/auth          |doctor auth           |*{email, password}              |{clinicID,doctorID,name,surname,nationalID,email,prefix,gender,licensePath,facePath}| |
 |get   |/doctor    |/viewHistoryAndEvaluate|View history and evaluate|*{doctorID}                                        |[doctorID,customerID,typeID,score,comment,time]|        |
 |post  |/doctor    |/useItem       |Use item              |*{doctorID,productID,amount}                                  |                  message             |                 |
 |post  |/doctor    |/treatFinish   |Finish the treat      |*{doctorID}                                                   |                  message             |                 |
@@ -113,7 +113,7 @@
 |get   |/customer  |/list          |get all customer      |                                -                             |[customerID,name,surname,gender,phone]|                 |
 |post  |/customer  |/serviceRequest|Add customer service request|*{clinicID,customerID,typeID,startTime}                 |                  message             |                 |
 |delete|/customer  |/serviceRequest|Delete customer service request|*{clinicID,customerID,typeID,startTime}              |                  message             |                 |
-|post  |/customer  |/auth          |customer auth         |*{email, password}                                            |{customerID,name,surname,nationalID,email}|             |
+|post  |/customer  |/auth          |customer auth         |*{nationalID, password}            |{customerID,name,surname,nationalID,email,gender,phone,drugAllergy,disease,blood}| |
 |get   |/customer  |/viewRequestTime|View own request time|*{customerID}                                                 |[clinicID,customerID,typeID,startTime]|                 |
 |get   |/customer  |/viewRequestTimeApprove|View own request time approve|*{customerID}                                  |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |get   |/customer  |/viewHistoryAndEvaluate|View history and evaluate|*{customerID}                                      |[doctorID,customerID,typeID,score,comment,time]|        |

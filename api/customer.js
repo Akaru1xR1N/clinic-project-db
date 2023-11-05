@@ -297,7 +297,7 @@ router.delete("/serviceRequest", async (req, res) => {
 router.post("/auth", async (req, res) => {
     console.log(req.originalUrl)
     let input = {
-        email: null,
+        nationalID: null,
         password: null
     }
     //validation
@@ -315,7 +315,7 @@ router.post("/auth", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT customerID, name, surname, nationalID, email FROM tb_customer WHERE email=? AND password=?;", [input.email, hashPassword])
+        const result = await con.query("SELECT customerID, name, surname, nationalID, email, gender, phone, drugAllergy, disease, blood FROM tb_customer WHERE nationalID=? AND password=?;", [input.nationalID, hashPassword])
         if (!result.length) throw new Error("Something went wrong")
         if (!result[0][0]) throw new Error("Username or password invalid.")
 

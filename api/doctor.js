@@ -348,7 +348,7 @@ router.post("/auth", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT doctorID, name, surname, nationalID, email FROM tb_doctor WHERE email=? AND password=?;", [input.email, hashPassword])
+        const result = await con.query("SELECT doctorID, clinicID, name, surname, nationalID, email, prefix, gender, licensePath, facePath FROM tb_doctor WHERE email=? AND password=?;", [input.email, hashPassword])
         if (!result.length) throw new Error("Something went wrong")
         if (!result[0][0]) throw new Error("Username or password invalid.")
 
