@@ -101,7 +101,7 @@ router.post("/face/:filename", async (req, res) => {
     const doctorID = req.query.doctorID
     if (filename == "null"){
         uploadForFace(req, res, async (err)=>{
-            if (err) return res.status(500).send({error: true, message: err})
+            if (err) return res.status(500).send({error: true, message: err.message})
             else {
                 try{
                     const con = await connection()
@@ -112,8 +112,8 @@ router.post("/face/:filename", async (req, res) => {
                     return res.send({error: false, message: "Add face path complete."})
                 }
                 catch(err){
-                    logger.error(req.originalUrl + " => " + err)
-                    return res.send({error: true, message: err})
+                    logger.error(req.originalUrl + " => " + err.message)
+                    return res.send({error: true, message: err.message})
                 }
             }
         })
@@ -123,7 +123,7 @@ router.post("/face/:filename", async (req, res) => {
             const filePath = path.join(__dirname, "..", "img/face", filename)
             fs.rmSync(filePath)
             uploadForFace(req, res, async (err)=>{
-                if (err) return res.status(500).send({error: true, message: err})
+                if (err) return res.status(500).send({error: true, message: err.message})
                 else {
                     try{
                         const con = await connection()
@@ -134,14 +134,14 @@ router.post("/face/:filename", async (req, res) => {
                         return res.send({error: false, message: "Update face path complete."})
                     }
                     catch(err){
-                        logger.error(req.originalUrl + " => " + err)
-                        return res.send({error: true, message: err})
+                        logger.error(req.originalUrl + " => " + err.message)
+                        return res.send({error: true, message: err.message})
                     }
                 }
             })
         }
         catch(err){
-            logger.error(req.originalUrl + " => " + err)
+            logger.error(req.originalUrl + " => " + err.message)
         }
     }
 })
@@ -152,7 +152,7 @@ router.post("/license/:filename", async (req, res) => {
     const doctorID = req.query.doctorID
     if (filename == "null"){
         uploadForLicense(req, res, async (err)=>{
-            if (err) return res.status(500).send({error: true, message: err})
+            if (err) return res.status(500).send({error: true, message: err.message})
             else {
                 try{
                     const con = await connection()
@@ -163,8 +163,8 @@ router.post("/license/:filename", async (req, res) => {
                     return res.send({error: false, message: "Add license path complete."})
                 }
                 catch(err){
-                    logger.error(req.originalUrl + " => " + err)
-                    return res.send({error: true, message: err})
+                    logger.error(req.originalUrl + " => " + err.message)
+                    return res.send({error: true, message: err.message})
                 }
             }
         })
@@ -174,7 +174,7 @@ router.post("/license/:filename", async (req, res) => {
             const filePath = path.join(__dirname, "..", "img/license", filename)
             fs.rmSync(filePath)
             uploadForLicense(req, res, async (err)=>{
-                if (err) return res.status(500).send({error: true, message: err})
+                if (err) return res.status(500).send({error: true, message: err.message})
                 else {
                     try{
                         const con = await connection()
@@ -185,14 +185,14 @@ router.post("/license/:filename", async (req, res) => {
                         return res.send({error: false, message: "Update license path complete."})
                     }
                     catch(err){
-                        logger.error(req.originalUrl + " => " + err)
-                        return res.send({error: true, message: err})
+                        logger.error(req.originalUrl + " => " + err.message)
+                        return res.send({error: true, message: err.message})
                     }
                 }
             })
         }
         catch(err){
-            logger.error(req.originalUrl + " => " + err)
+            logger.error(req.originalUrl + " => " + err.message)
         }
     }
 })
@@ -208,8 +208,8 @@ router.get("/face/:filename", async (req, res) => {
         fileStream.pipe(res)
     }
     catch(err){
-        logger.error(req.originalUrl + " => " + err)
-        return res.send({error: true, message: err})
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.send({error: true, message: err.message})
     }
 })
 
@@ -224,8 +224,8 @@ router.get("/license/:filename", async (req, res) => {
         fileStream.pipe(res)
     }
     catch(err){
-        logger.error(req.originalUrl + " => " + err)
-        return res.send({error: true, message: err})
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.send({error: true, message: err.message})
     }
 })
 
