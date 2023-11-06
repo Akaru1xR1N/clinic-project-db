@@ -418,10 +418,50 @@ router.get("/viewHistoryAndEvaluate", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT * FROM tb_historyEvaluate WHERE customerID=?;", [input.customerID])
+        const result = await con.query("SELECT clinicID, tb_doctor.doctorID, customerID, typeID, score, comment, time FROM tb_historyEvaluate INNER JOIN tb_doctor ON tb_historyEvaluate.doctorID=tb_doctor.doctorID WHERE customerID=?;", [input.customerID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get history and evaluate complete", data:result[0]})
+    }
+    catch (err){
+        logger.error(req.originalUrl + " => " + err.message)
+        return res.status(400).send({error: true, message: err.message})
+    }
+    finally{
+        con.end()
+    }
+})
+
+// Review
+router.post("/review", async (req, res) => {
+    console.log(req.originalUrl)
+    let input = {
+        customerID: null,
+        doctorID: null,
+        typeID: null,
+        time: null,
+        score: null,
+        comment: null
+    }
+    //validation
+    var valueCanNull = []
+    for (const [key, value] of Object.entries(input)) {
+        if (req.body[key] === undefined) {
+            if (valueCanNull.includes(key)) {
+                continue
+            }
+            return res.status(400).send({ error: true, message: `Please provide data according to format for KEY = ${key}.` })
+        }
+        input[key] = req.body[key]
+    }
+
+    const con = await connection()
+    try{
+        const result = await con.query("UPDATE tb_historyEvaluate SET score=?, comment=? WHERE customerID=? AND doctorID=? AND typeID=? AND time=?;",
+        [input.score, input.comment, input.customerID, input.doctorID, input.typeID, input.time])
+        if (!result.length) throw new Error("Something went wrong")
+
+        return res.send({error: false, message: "Review complete"})
     }
     catch (err){
         logger.error(req.originalUrl + " => " + err.message)
