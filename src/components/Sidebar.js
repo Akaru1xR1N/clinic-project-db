@@ -6,6 +6,7 @@ function Sidebar() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
     const [isCustomer, setIsCustomer] = useState(false);
+    const [isDoctor, setIsDoctor] = useState(false);
 
     const location = useLocation();
 
@@ -18,6 +19,9 @@ function Sidebar() {
 
         const isCustomerUser = localStorage.getItem('isCustomer');
         setIsCustomer(isCustomerUser === 'true');
+
+        const isDoctorUser = localStorage.getItem('isDoctor');
+        setIsDoctor(isDoctorUser === 'true');
     }, []);
 
     const isAdminActive = (path) => {
@@ -32,6 +36,10 @@ function Sidebar() {
         return location.pathname === path ? 'bg-white' : '';
     };
 
+    const isDoctorActive = (path) => {
+        return location.pathname === path ? 'bg-white' : '';
+    };
+
     const ToOwnerHome = () => {
         if (isAdmin) {
             window.location.href = '/admin/Home';
@@ -41,6 +49,9 @@ function Sidebar() {
         }
         if (isCustomer) {
             window.location.href = '/customer/Home';
+        }
+        if (isDoctor) {
+            window.location.href = '/doctor/Home';
         }
     };
 
@@ -78,10 +89,25 @@ function Sidebar() {
         if (isOwner) {
             window.location.href = '/owner/storage';
         }
+        if (isDoctor) {
+            window.location.href = '/doctor/storage';
+        }
     };
 
     const ToRequestPage = () => {
         window.location.href = '/customer/service/request';
+    };
+
+    const ToRegisteredPage = () => {
+        window.location.href = '/customer/service';
+    };
+
+    const ToHistoryPage = () => {
+        window.location.href = '/customer/service/history';
+    };
+
+    const ToTimeTable = () => {
+        window.location.href = '/doctor/time/table';
     };
 
     return (
@@ -90,7 +116,8 @@ function Sidebar() {
             ${isAdmin ? 'bg-[#FFD7B2]' :
                     isOwner ? 'bg-[#FFB2B2]' :
                         isCustomer ? 'bg-[#FFB2F3]' :
-                            'bg-[#FFFFFF]'}`}
+                            isDoctor ? 'bg-[#B2DAFF]' :
+                                'bg-[#FFFFFF]'}`}
         >
             {isAdmin && (
                 <div className="flex flex-col space-y-4 text-center text-2xl font-normal pt-4">
@@ -114,6 +141,16 @@ function Sidebar() {
                 <div className="flex flex-col space-y-4 text-center text-2xl font-normal pt-4">
                     <button onClick={ToOwnerHome} className={`hover:bg-white rounded ${isCustomerActive('/customer/Home')}`}>หน้าแรก</button>
                     <button onClick={ToRequestPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service/request')}`}>คำขอของฉัน</button>
+                    <button onClick={ToRegisteredPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service')}`}>การนัดหมาย</button>
+                    <button onClick={ToHistoryPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service/history')}`}>ประวัติการรักษา</button>
+                </div>
+            )}
+            {isDoctor && (
+                <div className="flex flex-col space-y-4 text-center text-2xl font-normal pt-4">
+                    <button onClick={ToOwnerHome} className={`hover:bg-white rounded ${isDoctorActive('/doctor/Home')}`}>หน้าแรก</button>
+                    <button onClick={ToTimeTable} className={`hover:bg-white rounded ${isDoctorActive('/doctor/time/table')}`}>ตารางนัดหมาย</button>
+                    <button onClick={ToStoragePage} className={`hover:bg-white rounded ${isDoctorActive('/doctor/storage')}`}>คลัง</button>
+                    <button onClick={ToHistoryPage} className={`hover:bg-white rounded ${isDoctorActive('/doctor/service/history')}`}>ประวัติการรักษา</button>
                 </div>
             )}
         </div>

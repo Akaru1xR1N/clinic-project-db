@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginNavbar from './LoginNavbar';
+import { useDoctor } from '../contexts/AdminContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const DoctorLogin = () => {
+    localStorage.setItem('isDoctorLogined', 'false');
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const { setDoctorDetail } = useDoctor();
+
+    useEffect(() => {
+        setDoctorDetail(null);
+    }, []);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -13,9 +26,37 @@ const DoctorLogin = () => {
         setPassword(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // ตรวจสอบ email และ password ที่ได้จาก state แล้วดำเนินการต่อไป
+
+        const LoginData = {
+            email: email,
+            password: password,
+        }
+
+        try {
+            const { data } = await axios.post(process.env.REACT_APP_API_URL + 'doctor/auth', LoginData);
+            setDoctorDetail(data.data);
+            await Swal.fire({
+                title: 'Login Complete!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            localStorage.setItem('isDoctor', true);
+            localStorage.setItem('isAdmin', false);
+            localStorage.setItem('isOwner', false);
+            localStorage.setItem('isCustomer', false);
+            localStorage.setItem('isDoctorLogined', 'true');
+            navigate('/doctor/Home', { state: { isDoctorLogined: true } });
+        } catch (error) {
+            Swal.fire({
+                title: 'Login fail',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
     };
 
     return (
@@ -63,7 +104,7 @@ const DoctorLogin = () => {
                         </div>
                         <div>
                             <button
-                                type="submit"
+                                onClick={handleSubmit}
                                 className="mt-4 block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 เข้าสู่ระบบ

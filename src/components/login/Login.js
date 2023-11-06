@@ -46,6 +46,7 @@ const Login = () => {
             localStorage.setItem('isCustomer', true);
             localStorage.setItem('isAdmin', false);
             localStorage.setItem('isOwner', false);
+            localStorage.setItem('isDoctor', false);
             localStorage.setItem('isCustomerLogined', 'true');
             navigate('/customer/Home', { state: { isCustomerLogined: true } });
         } catch (error) {

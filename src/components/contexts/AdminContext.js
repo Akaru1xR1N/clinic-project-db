@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 const AdminContext = createContext();
 const OwnerContext = createContext();
 const CustomerContext = createContext();
+const DoctorContext = createContext();
 
 export const AdminProvider = ({ children }) => {
     const [adminDetail, setAdminDetail] = useState(() => {
@@ -39,6 +40,7 @@ export const OwnerProvider = ({ children }) => {
         </OwnerContext.Provider>
     );
 };
+
 export const CustomerProvider = ({ children }) => {
     const [customerDetail, setCustomerDetail] = useState(() => {
         const storedCustomerDetail = localStorage.getItem('customerDetail');
@@ -57,6 +59,24 @@ export const CustomerProvider = ({ children }) => {
     );
 };
 
+export const DoctorProvider = ({ children }) => {
+    const [doctorDetail, setDoctorDetail] = useState(() => {
+        const storedDoctorDetail = localStorage.getItem('doctorDetail');
+        return storedDoctorDetail ? JSON.parse(storedDoctorDetail) : null;
+    });
+
+    const updateDoctorDetail = (newDoctorDetail) => {
+        setDoctorDetail(newDoctorDetail);
+        localStorage.setItem('doctorDetail', JSON.stringify(newDoctorDetail));
+    };
+
+    return (
+        <DoctorContext.Provider value={{ doctorDetail, setDoctorDetail: updateDoctorDetail }}>
+            {children}
+        </DoctorContext.Provider>
+    );
+};
+
 
 export const useAdmin = () => {
     return useContext(AdminContext);
@@ -68,4 +88,8 @@ export const useOwner = () => {
 
 export const useCustomer = () => {
     return useContext(CustomerContext);
+};
+
+export const useDoctor = () => {
+    return useContext(DoctorContext);
 };

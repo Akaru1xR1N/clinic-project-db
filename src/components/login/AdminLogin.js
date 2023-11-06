@@ -46,6 +46,7 @@ const AdminLogin = () => {
             localStorage.setItem('isAdmin', true);
             localStorage.setItem('isOwner', false);
             localStorage.setItem('isCustomer', false);
+            localStorage.setItem('isDoctor', false);
             localStorage.setItem('isAdminLogined', 'true');
             navigate('/admin/Home', { state: { isAdminLogined: true } });
         } catch (error) {

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useCustomer } from '../../components/contexts/AdminContext'
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function CustomerIn_ProgressPage() {
 
   const { customerDetail } = useCustomer();
 
-  const [typeID, setTypeID] = useState('');
+  const [deleted, setDeleted] = useState(false);
 
   const [clinicList, setClinicList] = useState([]);
   const [serviceList, setServiceList] = useState([]);
@@ -55,15 +56,86 @@ function CustomerIn_ProgressPage() {
     fetchRequestData();
     fetchClinicData();
 
-  }, [])
+  }, [deleted]);
 
   const matchingServiceType = (typeID) => {
     const matchedService = serviceList.find(service => service.typeID === typeID);
     return matchedService ? matchedService.typeName : 'ไม่พบข้อมูลบริการ';
   };
 
+  const matchingClinic = (clinicID) => {
+    const matchedClinic = clinicList.find(clinic => clinic.clinicID === clinicID);
+    return matchedClinic ? matchedClinic.name : 'ไม่พบข้อมูลบริการ';
+  };
+
+  const formattedDateTime = (startTime) => {
+    const dateObject = new Date(startTime);
+
+    const year = dateObject.getUTCFullYear();
+    const month = dateObject.toLocaleString('en-US', { month: 'long' });
+    const day = dateObject.getUTCDate().toString().padStart(2, '0');
+
+    const hours = dateObject.getUTCHours().toString().padStart(2, '0');
+    const minutes = dateObject.getUTCMinutes().toString().padStart(2, '0');
+
+    return `${day} ${month} ${year} ${hours}:${minutes} น.`;
+  };
+
+  const cancleRequest = async (typeID, clinicID, startTime) => {
+    setDeleted(false);
+
+    const dateObject = new Date(startTime);
+
+    const year = dateObject.getUTCFullYear();
+    const month = (dateObject.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = dateObject.getUTCDate().toString().padStart(2, '0');
+
+    const hours = dateObject.getUTCHours().toString().padStart(2, '0');
+    const minutes = dateObject.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = dateObject.getUTCSeconds().toString().padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} `;
+
+    const RequestData = {
+      clinicID: clinicID,
+      typeID: typeID,
+      customerID: customerDetail.customerID,
+      startTime: formattedDate
+    };
+
+    await Swal.fire({
+      icon: 'warning',
+      title: 'ต้องการยกเลิกคำขอใช่หรือไม่?',
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: 'ใช่',
+      cancelButtonText: 'ยกเลิก'
+    })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await axios.delete(process.env.REACT_APP_API_URL + 'customer/serviceRequest', { data: RequestData });
+            if (response.status === 200) {
+              await Swal.fire({
+                icon: 'success',
+                title: 'ยกเลิกคำขอเสร็จสิ้น',
+                showConfirmButton: false,
+                timer: 1500
+              });
+              setDeleted(true);
+            } else {
+              console.error('ERROR FOUND');
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      });
+  };
+
   return (
     <div>
+      <h1 className=' text-4xl font-normal text-center p-7'>บริการที่รออนุมัติ</h1>
       {requestList.map((request, index) => (
         <div key={index} className=' pb-4'>
           <div
@@ -72,18 +144,16 @@ function CustomerIn_ProgressPage() {
             }}
             className=' text-xl grid rounded-lg p-4 bg-slate-400'>
             <span className=' pb-4'>ชื่อบริการ: {matchingServiceType(request.typeID)}</span>
-            <span className=' pb-4'>สาขา: {request.clinicID}</span>
-            <span className=' pb-4'>วันที่นัดหมาย: {request.startTime}</span>
+            <span className=' pb-4'>สาขา: {matchingClinic(request.clinicID)}</span>
+            <span className='pb-4'>วันที่นัดหมาย: {formattedDateTime(request.startTime)}</span>
             <div>
               <button
                 // onClick={() => AddRequest(service.typeID)}
-                onClick={() => {
-                  // setTypeID(service.typeID);
-                }}
+                onClick={() => cancleRequest(request.typeID, request.clinicID, request.startTime)}
                 className=' rounded-lg p-2' style={{
-                  backgroundColor: '#FCFF79',
+                  backgroundColor: '#FF0000',
                   boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
-                }}>เลือก</button>
+                }}>ยกเลิก</button>
             </div>
           </div>
         </div>

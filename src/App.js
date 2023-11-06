@@ -11,6 +11,7 @@ import Signup from './components/login/Signup'
 import { AdminProvider } from './components/contexts/AdminContext'
 import { OwnerProvider } from './components/contexts/AdminContext'
 import { CustomerProvider } from './components/contexts/AdminContext'
+import { DoctorProvider } from './components/contexts/AdminContext'
 
 //general
 import HomePage from './page/general/HomePage'
@@ -19,6 +20,8 @@ import AboutUsPage from './page/general/AboutUsPage'
 //customer
 import CustomerHomePage from './page/customer/CustomerHomePage'
 import CustomerIn_ProgressPage from './page/customer/CustomerIn_ProgressPage'
+import CustomerRegisteredPage from './page/customer/CustomerRegisteredPage'
+import CustomerCompletedPage from './page/customer/CustomerCompletedPage'
 
 //admin
 import AdminHomePage from './page/admin/AdminHomepage'
@@ -37,6 +40,8 @@ import AdminAddOrder from './page/admin/AdminAddOrder'
 
 //doctor
 import DoctorHomePage from './page/doctor/DoctorHomePage'
+import DoctorTimeTablePage from './page/doctor/DoctorTimeTablePage'
+import DoctorStoragesPage from './page/doctor/DoctorStoragesPage'
 
 //owner
 import OwnerHomePage from './page/owner/OwnerHomePage'
@@ -95,6 +100,14 @@ const routes = [
     path: '/customer/service/request',
     element: <CustomerIn_ProgressPage />
   },
+  {
+    path: '/customer/service',
+    element: <CustomerRegisteredPage />
+  },
+  {
+    path: '/customer/service/history',
+    element: <CustomerCompletedPage />
+  },
 
   //admin
   {
@@ -150,6 +163,14 @@ const routes = [
   {
     path: '/doctor/Home',
     element: <DoctorHomePage />
+  },
+  {
+    path: '/doctor/time/table',
+    element: <DoctorTimeTablePage />
+  },
+  {
+    path: '/doctor/storage',
+    element: <DoctorStoragesPage />
   },
 
   //owner
@@ -212,9 +233,11 @@ function App() {
     <Router>
       <OwnerProvider>
         <AdminProvider>
-          <CustomerProvider>
-            <AppContent />
-          </CustomerProvider>
+          <DoctorProvider>
+            <CustomerProvider>
+              <AppContent />
+            </CustomerProvider>
+          </DoctorProvider>
         </AdminProvider>
       </OwnerProvider>
     </Router>
