@@ -383,7 +383,8 @@ router.get("/viewHistoryAndEvaluate", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT * FROM tb_historyEvaluate WHERE doctorID=?;", [input.doctorID])
+        const result = await con.query("SELECT clinicID,tb_historyEvaluate.doctorID,customerID,typeID,score,comment,time FROM tb_historyEvaluate INNER JOIN tb_doctor ON tb_historyEvaluate.doctorID=tb_doctor.doctorID WHERE tb_historyEvaluate.doctorID=?;",
+        [input.doctorID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get history and evaluate complete", data:result[0]})

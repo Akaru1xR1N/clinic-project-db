@@ -100,7 +100,7 @@
 |get   |/doctor    |/viewRequestTime|View request time from customer|*{clinicID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
 |post  |/doctor    |/acceptRequestTime|Accept service request time from customer|*{doctorID,clinicID,customerID,typeID,startTime}|          message             |                 |
 |post  |/doctor    |/auth          |doctor auth           |*{email, password}              |{clinicID,doctorID,name,surname,nationalID,email,prefix,gender,licensePath,facePath}| |
-|get   |/doctor    |/viewHistoryAndEvaluate|View history and evaluate|*{doctorID}                                        |[doctorID,customerID,typeID,score,comment,time]|        |
+|get   |/doctor    |/viewHistoryAndEvaluate|View history and evaluate|*{doctorID}                                        |[clinicID,doctorID,customerID,typeID,score,comment,time]| |
 |post  |/doctor    |/useItem       |Use item              |*{doctorID,productID,amount}                                  |                  message             |                 |
 |post  |/doctor    |/treatFinish   |Finish the treat      |*{doctorID}                                                   |                  message             |                 |
 |post  |/doctor    |/viewRequestTimeApprove|View own approve request|*{doctorID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
