@@ -103,6 +103,7 @@
 |get   |/doctor    |/viewHistoryAndEvaluate|View history and evaluate|*{doctorID}                                        |[doctorID,customerID,typeID,score,comment,time]|        |
 |post  |/doctor    |/useItem       |Use item              |*{doctorID,productID,amount}                                  |                  message             |                 |
 |post  |/doctor    |/treatFinish   |Finish the treat      |*{doctorID}                                                   |                  message             |                 |
+|post  |/doctor    |/viewRequestTimeApprove|View own approve request|*{doctorID}                                         |[clinicID,customerID,typeID,doctorID,startTime]|        |
 
 ## customer
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
@@ -116,7 +117,8 @@
 |post  |/customer  |/auth          |customer auth         |*{nationalID, password}            |{customerID,name,surname,nationalID,email,gender,phone,drugAllergy,disease,blood}| |
 |get   |/customer  |/viewRequestTime|View own request time|*{customerID}                                                 |[clinicID,customerID,typeID,startTime]|                 |
 |get   |/customer  |/viewRequestTimeApprove|View own request time approve|*{customerID}                                  |[clinicID,customerID,typeID,doctorID,startTime]|        |
-|get   |/customer  |/viewHistoryAndEvaluate|View history and evaluate|*{customerID}                                      |[doctorID,customerID,typeID,score,comment,time]|        |
+|get   |/customer  |/viewHistoryAndEvaluate|View history and evaluate|*{customerID}                                      |[clinicID,doctorID,customerID,typeID,score,comment,time]| |
+|post  |/customer  |/review        |review doctor         |*{customerID,doctorID,typeID,time,score,comment}              |                  message             |                 |
 
 ## upload
 |method|   group   |      path     |        detail        |                            data send                         |              data receive            |        note     |
