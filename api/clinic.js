@@ -868,7 +868,8 @@ router.get("/useItemHistory", async (req, res) => {
 
     const con = await connection()
     try{
-        const result = await con.query("SELECT * FROM tb_useItem INNER JOIN tb_storage ON tb_useItem.productID=tb_storage.productID WHERE clinicID=?", [input.clinicID])
+        const result = await con.query("SELECT doctorID, tb_storage.productID, clinicID, typeID, tb_useItem.amount, time, productName FROM tb_useItem INNER JOIN tb_storage ON tb_useItem.productID=tb_storage.productID WHERE clinicID=?",
+        [input.clinicID])
         if (!result.length) throw new Error("Something went wrong")
 
         return res.send({error: false, message: "Get use item history complete.", data: result[0]})
