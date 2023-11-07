@@ -19,7 +19,7 @@ SET @@session.time_zone = "SYSTEM";
 DROP TABLE IF EXISTS tb_item;
 CREATE TABLE tb_item(
     itemID SMALLINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    itemName VARCHAR(50) NOT NULL,
+    itemName VARCHAR(200) NOT NULL,
     price DECIMAL(14,4) UNSIGNED NOT NULL
 );
 /**************************************************************/
@@ -92,7 +92,7 @@ DROP TABLE IF EXISTS tb_storage;
 CREATE TABLE tb_storage(
     productID SMALLINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     clinicID SMALLINT UNSIGNED NOT NULL,
-    productName VARCHAR(50) NOT NULL,
+    productName VARCHAR(200) NOT NULL,
     amount SMALLINT UNSIGNED NOT NULL,
 
     -- FK
@@ -337,7 +337,7 @@ CREATE TRIGGER totalPriceAndBankAndStorageOrderItem BEFORE INSERT ON tb_orderIte
     FOR EACH ROW
     BEGIN
         DECLARE price DECIMAL(14,4) UNSIGNED DEFAULT (SELECT price FROM tb_item WHERE itemID=NEW.itemID);
-        DECLARE prodName VARCHAR(50);
+        DECLARE prodName VARCHAR(200);
         SET NEW.totalPrice = price * NEW.amount;
 
         INSERT INTO tb_bank(clinicID, type, value) VALUES (NEW.clinicID, 0, NEW.totalPrice);
@@ -439,7 +439,7 @@ CREATE PROCEDURE sp_treatFinish(IN DrID MEDIUMINT UNSIGNED)
             DELETE FROM tb_reqTime WHERE startTime=initTime AND doctorID=DrID AND typeID=serviceType;
             UPDATE tb_timetable SET endTime=currentTime WHERE startTime=initTime AND doctorID=DrID;
         ELSEIF currentTime > finTime THEN
-            INSERT INTO tb_historyEvaluate (doctorID, customerID, typeID, time) VALUES (DrID, cusID, serviceType, currentTime);
+            INSERT INTO tb_historyEvaluate (doctorID, customerID, typeID, time) VALUES (DrID, cusID, serviceType, finTime);
             DELETE FROM tb_reqTime WHERE startTime=initTime AND doctorID=DrID AND typeID=serviceType;
         END IF;
     END;
