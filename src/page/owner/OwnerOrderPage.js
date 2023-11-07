@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { useOwner } from '../../components/contexts/AdminContext';
 import Popup from 'reactjs-popup';
 import Swal from 'sweetalert2';
+import Pagination from '../../components/pagination/Pagination';
 
 function OwnerOrderPage() {
 
@@ -23,6 +24,11 @@ function OwnerOrderPage() {
   const [clinicList, setClinicList] = useState([]);
 
   const [isOrderVisible, setIsOrderVisible] = useState(false);
+
+  const [filteredHistoryList, setFilteredHistoryList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   useEffect(() => {
     const isOwnerLogined = localStorage.getItem('isOwnerLogined');
@@ -90,6 +96,40 @@ function OwnerOrderPage() {
     fetchOrderHistory();
   }, [ordered]);
 
+  const getFormattedDateAndItemName = (history) => {
+    const matchingItem = itemList.find(item => item.itemID === history.itemID);
+    const itemName = matchingItem ? matchingItem.itemName : '';
+
+    const dateTime = new Date(history.time);
+    dateTime.setUTCHours(0, 0, 0, 0); // Set the time to midnight in UTC timezone
+
+    const year = dateTime.getUTCFullYear();
+    const month = String(dateTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getUTCDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    return { formattedDate, itemName };
+  };
+
+  useEffect(() => {
+    const filteredList = historyList.filter(history => {
+      const { formattedDate, itemName } = getFormattedDateAndItemName(history);
+      return (
+        formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.amount.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.totalPrice.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredHistoryList(filteredList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+  }, [historyList, itemList, searchTerm]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredHistoryList.slice(indexOfFirstItem, indexOfLastItem);
+
   const renderOrderTableRows = (orderList) => {
     return orderList.map((order, index) => {
       const matchingItem = itemList.find(item => item.itemID === order.itemID);
@@ -137,16 +177,7 @@ function OwnerOrderPage() {
 
   const renderHistoryTableRows = (historyList) => {
     return historyList.map((history, index) => {
-      const matchingItem = itemList.find(item => item.itemID === history.itemID);
-      const itemName = matchingItem ? matchingItem.itemName : '';
-
-      const dateTime = new Date(history.time);
-      dateTime.setUTCHours(0, 0, 0, 0); // Set the time to midnight in UTC timezone
-
-      const year = dateTime.getUTCFullYear();
-      const month = String(dateTime.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(dateTime.getUTCDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
+      const { formattedDate, itemName } = getFormattedDateAndItemName(history);
 
       return (
         <tr key={history.historyID || index}>
@@ -240,6 +271,14 @@ function OwnerOrderPage() {
     setClinicID(clinicAPI.clinicID);
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>สั่งอุปกรณ์</h1>
@@ -322,6 +361,13 @@ function OwnerOrderPage() {
         </div>
         <h2 className=' text-2xl font-normal mt-4'>ประวัติการสั่งซื้อ</h2>
         <div className=' grid pb-4 pt-4'>
+          <input
+            type="text"
+            placeholder="ค้นหาตามวันที่สั่ง, ชื่ออุปกรณ์, จำนวน, หรือราคา"
+            className="rounded-lg p-2 border border-gray-300 mb-4"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
           <table className=' table-auto'>
             <thead style={{
               backgroundColor: '#FFB2B2',
@@ -335,9 +381,16 @@ function OwnerOrderPage() {
               </tr>
             </thead>
             <tbody>
-              {renderHistoryTableRows(historyList)}
+              {renderHistoryTableRows(currentItems)}
             </tbody>
           </table>
+          <div className="pagination flex justify-center mt-4">
+            <Pagination
+              totalItems={filteredHistoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+              itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+              onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+            />
+          </div>
         </div>
       </div>
     </div>

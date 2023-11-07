@@ -22,6 +22,7 @@ import CustomerHomePage from './page/customer/CustomerHomePage'
 import CustomerIn_ProgressPage from './page/customer/CustomerIn_ProgressPage'
 import CustomerRegisteredPage from './page/customer/CustomerRegisteredPage'
 import CustomerCompletedPage from './page/customer/CustomerCompletedPage'
+import CustomerAccountPage from './page/customer/CustomerAccountPage'
 
 //admin
 import AdminHomePage from './page/admin/AdminHomepage'
@@ -36,12 +37,15 @@ import AdminEditService from './page/admin/AdminEditService'
 import AdminOrderPage from './page/admin/AdminOrderPage'
 import AdminStoragesPage from './page/admin/AdminStoragesPage'
 import AdminAddOrder from './page/admin/AdminAddOrder'
+import AdminAccountPage from './page/admin/AdminAccountPage'
 
 
 //doctor
 import DoctorHomePage from './page/doctor/DoctorHomePage'
 import DoctorTimeTablePage from './page/doctor/DoctorTimeTablePage'
 import DoctorStoragesPage from './page/doctor/DoctorStoragesPage'
+import DoctorHistoryPage from './page/doctor/DoctorHistoryPage'
+import DoctorAccountPage from './page/doctor/DoctorAccountPage'
 
 //owner
 import OwnerHomePage from './page/owner/OwnerHomePage'
@@ -57,6 +61,7 @@ import OwnerAddService from './page/owner/OwnerAddService'
 import OwnerEditService from './page/owner/OwnerEditService'
 import OwnerOrderPage from './page/owner/OwnerOrderPage'
 import OwnerStoragesPage from './page/owner/OwnerStoragesPage'
+import OwnerAccountPage from './page/owner/OwnerAccountPage'
 
 const routes = [
   //Login
@@ -83,7 +88,7 @@ const routes = [
 
   //general
   {
-    path: '/Home',
+    path: '/',
     element: <HomePage />
   },
   {
@@ -107,6 +112,10 @@ const routes = [
   {
     path: '/customer/service/history',
     element: <CustomerCompletedPage />
+  },
+  {
+    path: '/customer/account',
+    element: <CustomerAccountPage />
   },
 
   //admin
@@ -158,6 +167,10 @@ const routes = [
     path: '/admin/add/order',
     element: <AdminAddOrder />
   },
+  {
+    path: '/admin/account',
+    element: <AdminAccountPage />
+  },
 
   //doctor
   {
@@ -171,6 +184,14 @@ const routes = [
   {
     path: '/doctor/storage',
     element: <DoctorStoragesPage />
+  },
+  {
+    path: '/doctor/service/history',
+    element: <DoctorHistoryPage />
+  },
+  {
+    path: '/doctor/account',
+    element: <DoctorAccountPage />
   },
 
   //owner
@@ -226,6 +247,10 @@ const routes = [
     path: '/owner/storage',
     element: <OwnerStoragesPage />
   },
+  {
+    path: '/owner/account',
+    element: <OwnerAccountPage />
+  },
 ]
 
 function App() {
@@ -246,7 +271,7 @@ function App() {
 
 function AppContent() {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login' || location.pathname === '/owner/login' || location.pathname === '/admin/login' || location.pathname === '/doctor/login' || location.pathname === '/signup';
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/owner/login' || location.pathname === '/admin/login' || location.pathname === '/doctor/login' || location.pathname === '/signup' || location.pathname === '/';
 
   const contentStyle = {
     marginLeft: isLoginPage ? '0' : '250px', // ถ้าเป็นหน้า Login กำหนด marginLeft เป็น 0 ไม่มี margin

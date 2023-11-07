@@ -4,6 +4,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
+import Pagination from '../../components/pagination/Pagination';
 
 function DoctorStoragesPage() {
 
@@ -24,6 +25,16 @@ function DoctorStoragesPage() {
   const [doctorList, setDoctorList] = useState([]);
   const [serviceInused, setServiceInused] = useState([]);
   const [serviceUnused, setServiceUnused] = useState([]);
+
+  const [filteredHistoryList, setFilteredHistoryList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  const [filteredStorageList, setFilteredStorageList] = useState([]);
+  const [searchTermStorage, setSearchTermStorage] = useState('');
+  const [currentPageStorage, setCurrentPageStorage] = useState(1);
+  const [itemsPerPageStorage] = useState(5);
 
   useEffect(() => {
     const isDoctorLogined = localStorage.getItem('isDoctorLogined');
@@ -123,36 +134,79 @@ function DoctorStoragesPage() {
 
   }, [ordered]);
 
-  const renderStorageTableRows = (storageList) => {
-    return storageList.map(storage => {
+  const getFormattedDateAndItemName = (history) => {
+    const matchingDoctor = doctorList.find(doctor => doctor.doctorID === history.doctorID);
+    const doctorName = matchingDoctor ? matchingDoctor.name : '';
+    const doctorSurname = matchingDoctor ? matchingDoctor.surname : '';
+
+    const matchingServiceInused = serviceInused.find(service => service.typeID === history.typeID);
+    const matchingServiceUnused = serviceUnused.find(service => service.typeID === history.typeID);
+    // const serviceName = matchingServiceInused ? matchingServiceInused.typeName : '';
+    const serviceName = matchingServiceInused ? matchingServiceInused.typeName : matchingServiceUnused ? matchingServiceUnused.typeName : '';
+
+    const dateTime = new Date(history.time);
+    dateTime.setUTCHours(0, 0, 0, 0); // Set the time to midnight in UTC timezone
+
+    const year = dateTime.getUTCFullYear();
+    const month = String(dateTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getUTCDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    return { formattedDate, doctorName, doctorSurname, serviceName };
+  };
+
+  useEffect(() => {
+    const filteredList = historyList.filter(history => {
+      const { formattedDate, doctorName, doctorSurname, serviceName } = getFormattedDateAndItemName(history);
       return (
-        <tr key={storage.productID}>
+        formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctorSurname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.amount.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredHistoryList(filteredList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+    const filteredStorageList = storageList.filter(storage => {
+      return (
+        storage.productName.toLowerCase().includes(searchTermStorage.toLowerCase()) ||
+        storage.amount.toString().toLowerCase().includes(searchTermStorage.toLowerCase())
+      );
+    });
+    setFilteredStorageList(filteredStorageList);
+    setCurrentPageStorage(1); // Reset to the first page when the search term changes
+
+  }, [historyList, doctorList, searchTerm, searchTermStorage, storageList]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredHistoryList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const indexOfLastItemStorage = currentPageStorage * itemsPerPageStorage;
+  const indexOfFirstItemStorage = indexOfLastItemStorage - itemsPerPageStorage;
+  const currentItemsStorage = filteredStorageList.slice(indexOfFirstItemStorage, indexOfLastItemStorage);
+
+  const renderStorageTableRows = (storageList) => {
+    return storageList.map((storage, index) => {
+      return (
+        <tr key={`storage-${storage.productID}-${index}`}>
           <td style={{ textAlign: 'center' }}>{storage.productName}</td>
           <td style={{ textAlign: 'center' }}>{storage.amount}</td>
         </tr>
-      )
-    })
+      );
+    });
   };
 
   const renderHistoryTableRows = (historyList) => {
-    return historyList.map(history => {
-      const matchingDoctor = doctorList.find(doctor => doctor.doctorID === history.doctorID);
-      const doctorName = matchingDoctor ? matchingDoctor.name : '';
-      const doctorSurname = matchingDoctor ? matchingDoctor.surname : '';
-      const matchingServiceInused = serviceInused.find(service => service.typeID === history.typeID);
-      const matchingServiceUnused = serviceUnused.find(service => service.typeID === history.typeID);
-      // const serviceName = matchingServiceInused ? matchingServiceInused.typeName : '';
-      const serviceName = matchingServiceInused ? matchingServiceInused.typeName : matchingServiceUnused ? matchingServiceUnused.typeName : '';
-
-      const dateTime = new Date(history.time);
-      const year = dateTime.getFullYear();
-      const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-      const day = String(dateTime.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-
+    return historyList.map((history, index) => {
+      const { formattedDate, doctorName, doctorSurname, serviceName } = getFormattedDateAndItemName(history);
+      const uniqueKey = `${history.productID}_${index}`; // Combine productID and index to create a unique key
 
       return (
-        <tr key={history.productID}>
+        <tr key={uniqueKey}>
           <td style={{ textAlign: 'center' }}>{formattedDate}</td>
           <td style={{ textAlign: 'center' }}>{serviceName}</td>
           <td style={{ textAlign: 'center' }}>{doctorName}</td>
@@ -160,8 +214,8 @@ function DoctorStoragesPage() {
           <td style={{ textAlign: 'center' }}>{history.productName}</td>
           <td style={{ textAlign: 'center' }}>{history.amount}</td>
         </tr>
-      )
-    })
+      );
+    });
   };
 
   const renderOrderTableRows = (orderList) => {
@@ -170,7 +224,7 @@ function DoctorStoragesPage() {
       const itemName = matchingItem ? matchingItem.itemName : '';
 
       return (
-        <tr key={index}>
+        <tr key={`order-${order.itemID}-${index}`}>
           <td style={{ textAlign: 'center' }}>{itemName}</td>
           <td style={{ textAlign: 'center' }}>{order.amount}</td>
           <td style={{
@@ -287,12 +341,35 @@ function DoctorStoragesPage() {
     }
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleSearchStorage = event => {
+    setSearchTermStorage(event.target.value);
+  };
+
+  const handlePageChangeStorage = pageNumberStorage => {
+    setCurrentPageStorage(pageNumberStorage);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>อุปกรณ์ในคลัง</h1>
       <div>
         <div>
           <div className=' grid pb-4 pt-4'>
+            <input
+              type="text"
+              placeholder="ค้นหาตามชื่ออุปกรณ์ หรือจำนวน"
+              className="rounded-lg p-2 border border-gray-300 mb-4"
+              value={searchTermStorage}
+              onChange={handleSearchStorage}
+            />
             <table className=' table-auto'>
               <thead style={{
                 backgroundColor: '#B2DAFF',
@@ -304,9 +381,16 @@ function DoctorStoragesPage() {
                 </tr>
               </thead>
               <tbody>
-                {renderStorageTableRows(storageList)}
+                {renderStorageTableRows(currentItemsStorage)}
               </tbody>
             </table>
+            <div className="pagination flex justify-center">
+              <Pagination
+                totalItems={filteredStorageList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                itemsPerPage={itemsPerPageStorage} // จำนวนรายการต่อหน้า
+                onPageChange={handlePageChangeStorage} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+              />
+            </div>
           </div>
           <div className=''>
             <div className=' flex place-content-end mr-14 space-x-4 pb-4'>
@@ -378,6 +462,13 @@ function DoctorStoragesPage() {
           </div>
           <h2 className=' text-2xl font-normal mt-4'>ประวัติการใช้อุปกรณ์</h2>
           <div className=' grid pb-4 pt-4'>
+            <input
+              type="text"
+              placeholder="ค้นหาวันที่ใช้, ชื่อบริการ, ชื่อแพทย์, นามสกุลแพทย์, ชื่ออุปกรณ์, หรือจำนวน"
+              className="rounded-lg p-2 border border-gray-300 mb-4"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
             <table className=' table-auto'>
               <thead style={{
                 backgroundColor: '#B2DAFF',
@@ -393,9 +484,16 @@ function DoctorStoragesPage() {
                 </tr>
               </thead>
               <tbody>
-                {renderHistoryTableRows(historyList)}
+                {renderHistoryTableRows(currentItems)}
               </tbody>
             </table>
+            <div className="pagination flex justify-center mt-4">
+              <Pagination
+                totalItems={filteredHistoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+                onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useAdmin } from '../../components/contexts/AdminContext';
+import Pagination from '../../components/pagination/Pagination';
 
 function AdminUserManagementPage() {
 
@@ -8,6 +9,16 @@ function AdminUserManagementPage() {
 
   const [adminList, setAdminList] = useState([]);
   const [doctorList, setDoctorList] = useState([]);
+
+  const [filteredDoctorList, setFilteredDoctorList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  const [filteredAdminList, setFilteredAdminList] = useState([]);
+  const [searchTermAdmin, setSearchTermAdmin] = useState('');
+  const [currentPageAdmin, setCurrentPageAdmin] = useState(1);
+  const [itemsPerPageAdmin] = useState(5);
 
   const ToAddAdmin = () => {
     window.location.href = "/admin/user/add/admin";
@@ -50,6 +61,38 @@ function AdminUserManagementPage() {
     fetchAdminData();
     fetchDoctorData();
   }, []);
+
+  useEffect(() => {
+    const filteredList = doctorList.filter(doctor => {
+      return (
+        doctor.prefix.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctor.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doctor.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredDoctorList(filteredList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+    const filteredAdminList = adminList.filter(admin => {
+      return (
+        admin.name.toLowerCase().includes(searchTermAdmin.toLowerCase()) ||
+        admin.surname.toLowerCase().includes(searchTermAdmin.toLowerCase()) ||
+        admin.email.toLowerCase().includes(searchTermAdmin.toLowerCase())
+      );
+    });
+    setFilteredAdminList(filteredAdminList);
+    setCurrentPageAdmin(1); // Reset to the first page when the search term changes
+
+  }, [doctorList, searchTerm, adminList, searchTermAdmin]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDoctorList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const indexOfLastItemAdmin = currentPageAdmin * itemsPerPageAdmin;
+  const indexOfFirstItemAdmin = indexOfLastItemAdmin - itemsPerPageAdmin;
+  const currentItemsAdmin = filteredAdminList.slice(indexOfFirstItemAdmin, indexOfLastItemAdmin);
 
   const ToEditAdmin = (adminID) => {
     window.location.href = '/admin/user/edit/admin/' + adminID;
@@ -110,6 +153,22 @@ function AdminUserManagementPage() {
     })
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchAdmin = event => {
+    setSearchTermAdmin(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePageChangeAdmin = pageNumberAdmin => {
+    setCurrentPageAdmin(pageNumberAdmin);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>จัดการผู้ใช้</h1>
@@ -134,6 +193,13 @@ function AdminUserManagementPage() {
           <h2 className=' text-2xl font-normal mb-4'>รายชื่อผู้ดูแลระบบ</h2>
         </div>
         <div className=' grid pb-4 pt-4'>
+          <input
+            type="text"
+            placeholder="ค้นหาตามชื่อ, นามสกุล, หรืออีเมล"
+            className="rounded-lg p-2 border border-gray-300 mb-4"
+            value={searchTermAdmin}
+            onChange={handleSearchAdmin}
+          />
           <table className=' table-auto'>
             <thead style={{
               backgroundColor: '#FFD7B2',
@@ -147,9 +213,16 @@ function AdminUserManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {renderAdminTableRows(adminList)}
+              {renderAdminTableRows(currentItemsAdmin)}
             </tbody>
           </table>
+          <div className="pagination flex justify-center mt-4">
+            <Pagination
+              totalItems={filteredAdminList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+              itemsPerPage={itemsPerPageAdmin} // จำนวนรายการต่อหน้า
+              onPageChange={handlePageChangeAdmin} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+            />
+          </div>
         </div>
       </div>
       <div>
@@ -157,6 +230,13 @@ function AdminUserManagementPage() {
           <h2 className=' text-2xl font-normal mb-4'>รายชื่อหมอ</h2>
         </div>
         <div className=' grid pb-4 pt-4'>
+          <input
+            type="text"
+            placeholder="ค้นหาตามคำนำหน้าชื่อ, ชื่อ, นามสกุล, หรืออีเมล"
+            className="rounded-lg p-2 border border-gray-300 mb-4"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
           <table className=' table-auto'>
             <thead style={{
               backgroundColor: '#FFD7B2',
@@ -171,9 +251,16 @@ function AdminUserManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {renderDoctorTableRows(doctorList)}
+              {renderDoctorTableRows(currentItems)}
             </tbody>
           </table>
+          <div className="pagination flex justify-center mt-4">
+            <Pagination
+              totalItems={filteredDoctorList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+              itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+              onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+            />
+          </div>
         </div>
       </div>
     </div>

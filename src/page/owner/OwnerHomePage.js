@@ -1,11 +1,47 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import Select from 'react-select';
 import Swal from 'sweetalert2';
+import GraphComponent from '../../components/graph/GraphComponent';
+import GraphCaseComponent from '../../components/graph/GraphCaseComponents';
+import Pagination from '../../components/pagination/Pagination';
 
 function OwnerHomePage() {
 
+  const [year, setYear] = useState('');
+  const [clinicID, setClinicID] = useState('');
+  const [month, setMonth] = useState('');
+  const [totalStatementList, setTotalStatementList] = useState('');
+
+  const [statementList, setStatementList] = useState([]);
+  const [caseList, setCaseList] = useState([]);
+  // const statementList = [
+  //   {
+  //     "clinicID": 1,
+  //     "time": "2023-11-04",
+  //     "value": "1754.5000",
+  //     "type": 0
+  //   },
+  //   // ... เพิ่มข้อมูล statementList ตามต้องการ
+  // ];
   const [InusedClinic, setInusedClinic] = useState([]);
   const [UnusedClinic, setUnusedClinic] = useState([]);
+  const [clinicList, setClinicList] = useState([]);
+  const monthList = [
+    { value: 1, label: "มกราคม" },
+    { value: 2, label: "กุมภาพันธ์" },
+    { value: 3, label: "มีนาคม" },
+    { value: 4, label: "เมษายน" },
+    { value: 5, label: "พฤษภาคม" },
+    { value: 6, label: "มิถุนายน" },
+    { value: 7, label: "กรกฎาคม" },
+    { value: 8, label: "สิงหาคม" },
+    { value: 9, label: "กันยายน" },
+    { value: 10, label: "ตุลาคม" },
+    { value: 11, label: "พฤศจิกายน" },
+    { value: 12, label: "ธันวาคม" }
+  ];
+
 
   const [deleted, setDeleted] = useState(false);
   const [opened, setOpened] = useState(false);
@@ -14,6 +50,16 @@ function OwnerHomePage() {
   //VisibleTable
   const [isTableInusedVisible, setIsTableInusedVisible] = useState(false);
   const [isTableUnusedVisible, setIsTableUnusedVisible] = useState(false);
+
+  const [filteredInusedList, setFilteredInusedList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  const [filteredUnusedList, setFilteredUnusedList] = useState([]);
+  const [searchTermUnused, setSearchTermUnused] = useState('');
+  const [currentPageUnused, setCurrentPageUnused] = useState(1);
+  const [itemsPerPageUnused] = useState(5);
 
   const toggleTableInusedVisibility = () => {
     setIsTableInusedVisible(!isTableInusedVisible);
@@ -63,9 +109,61 @@ function OwnerHomePage() {
       }
     };
 
+    const fetchClinicData = async () => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/inused');
+        const responseData = response.data;
+        if (!responseData.error) {
+          const options = responseData.data.map(clinic => ({
+            value: clinic.clinicID,
+            label: clinic.name,
+            clinicID: clinic.clinicID
+          }))
+          setClinicList(options);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchDataInuesdTable();
     fetchDataUnuesdTable();
+    fetchClinicData();
+
   }, [opened, deleted, closed]);
+
+  useEffect(() => {
+    const filteredInusedList = InusedClinic.filter(inUsed => {
+      return (
+        inUsed.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inUsed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inUsed.totalMoney.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredInusedList(filteredInusedList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+    const filteredUnusedList = UnusedClinic.filter(unUsed => {
+      return (
+        unUsed.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        unUsed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        unUsed.totalMoney.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredUnusedList(filteredUnusedList);
+    setCurrentPageUnused(1); // Reset to the first page when the search term changes
+
+  }, [InusedClinic, searchTerm, UnusedClinic, searchTermUnused]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredInusedList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredInusedList.length / itemsPerPage);
+
+  const indexOfLastItemUnused = currentPageUnused * itemsPerPageUnused;
+  const indexOfFirstItemUnused = indexOfLastItemUnused - itemsPerPageUnused;
+  const currentItemsUnused = filteredUnusedList.slice(indexOfFirstItemUnused, indexOfLastItemUnused);
+  const totalPagesUnused = Math.ceil(filteredUnusedList.length / itemsPerPageUnused);
 
   //DeleteData
   const ChangeToClose = async (clinicID) => {
@@ -232,6 +330,63 @@ function OwnerHomePage() {
     });
   };
 
+  const onchangeClinic = async (clinicList) => {
+    setClinicID(clinicList.clinicID);
+  };
+  const onchangeMonth = async (monthList) => {
+    setMonth(monthList.value);
+  };
+
+  const ToSearch = async () => {
+    const searchData = {
+      clinicID: clinicID,
+      month: month,
+      year: year,
+    }
+
+    const searchCaseData = {
+      clinicID: clinicID,
+      year: year,
+    }
+
+    try {
+      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'summary/statement', { params: searchData })
+      setStatementList(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'summary/totalstatement', { params: searchData })
+      setTotalStatementList(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const { data } = await axios.get(process.env.REACT_APP_API_URL + 'summary/totalCase', { params: searchCaseData })
+      setCaseList(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchUnused = event => {
+    setSearchTermUnused(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePageChangeUnused = pageNumberUnused => {
+    setCurrentPageUnused(pageNumberUnused);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>ภาพรวม</h1>
@@ -263,6 +418,13 @@ function OwnerHomePage() {
             </div>
             {isTableInusedVisible && (
               <div className=' grid pb-4'>
+                <input
+                  type="text"
+                  placeholder="ค้นหาตามชื่อจังหวัด, ชื่อคลินิก หรือรายได้สุทธิ"
+                  className="rounded-lg p-2 border border-gray-300 mb-4"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                />
                 <table className=' table-auto'>
                   <thead style={{
                     backgroundColor: '#FFB2B2',
@@ -271,14 +433,21 @@ function OwnerHomePage() {
                     <tr>
                       <th style={{ textAlign: 'center' }}>จังหวัด</th>
                       <th style={{ textAlign: 'center' }}>ชื่อสาขา</th>
-                      <th style={{ textAlign: 'center' }}>เงินทุน</th>
+                      <th style={{ textAlign: 'center' }}>รายได้สุทธิ</th>
                       <th style={{ textAlign: 'center' }}>การกระทำ</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {renderInusedTableRows(InusedClinic)}
+                    {renderInusedTableRows(currentItems)}
                   </tbody>
                 </table>
+                <div className="pagination flex justify-center mt-4">
+                  <Pagination
+                    totalItems={filteredInusedList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                    itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+                    onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -297,6 +466,13 @@ function OwnerHomePage() {
             </div>
             {isTableUnusedVisible && (
               <div className=' grid'>
+                <input
+                  type="text"
+                  placeholder="ค้นหาตามชื่อ"
+                  className="rounded-lg p-2 border border-gray-300 mb-4"
+                  value={searchTermUnused}
+                  onChange={handleSearchUnused}
+                />
                 <table className=' table-auto'>
                   <thead style={{
                     backgroundColor: '#FFB2B2',
@@ -305,16 +481,64 @@ function OwnerHomePage() {
                     <tr>
                       <th style={{ textAlign: 'center' }}>จังหวัด</th>
                       <th style={{ textAlign: 'center' }}>ชื่อสาขา</th>
-                      <th style={{ textAlign: 'center' }}>เงินทุน</th>
+                      <th style={{ textAlign: 'center' }}>รายได้สุทธิ</th>
                       <th style={{ textAlign: 'center' }}>การกระทำ</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {renderUnusedTableRows(UnusedClinic)}
+                    {renderUnusedTableRows(currentItemsUnused)}
                   </tbody>
                 </table>
+                <div className="pagination flex justify-center mt-4">
+                  <Pagination
+                    totalItems={filteredUnusedList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                    itemsPerPage={itemsPerPageUnused} // จำนวนรายการต่อหน้า
+                    onPageChange={handlePageChangeUnused} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+                  />
+                </div>
               </div>
             )}
+          </div>
+          <div className=' grid pb-4 pt-4'>
+            <span className=' text-2xl font-normal mb-4'>ข้อมูลสาขา</span>
+            <Select className=' w-2/5'
+              options={clinicList}
+              onChange={onchangeClinic}
+              placeholder='---โปรดระบุชื่อสาขา---'>
+            </Select>
+            <div className=' grid pb-4 pt-4'>
+              <span className=' text-2xl font-normal mb-4'>ข้อมูลค่าใช้จ่ายประจำเดือน</span>
+              <div className=' flex space-x-7'>
+                <Select className=' w-2/5'
+                  options={monthList}
+                  onChange={onchangeMonth}
+                  placeholder='---โปรดระบุชื่อเดือน---'>
+                </Select>
+                <input className=' border-2 border-black rounded-full w-2/5 py-1 px-6'
+                  onChange={(event) => {
+                    setYear(event.target.value);
+                  }}
+                  value={year}
+                  placeholder='ระบุปี (ค.ศ.)'
+                />
+              </div>
+              <div className=' mt-4'>
+                <button onClick={ToSearch} className=' rounded-lg p-3' style={{
+                  backgroundColor: '#FF79E2',
+                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+                >
+                  ค้นหา
+                </button>
+              </div>
+              <span className=' text-2xl font-normal mb-2 mt-4'>รายได้สุทธิ : {totalStatementList} บาท</span>
+            </div>
+            <div>
+              <GraphComponent statementList={statementList} />
+            </div>
+            <div>
+              <GraphCaseComponent caseList={caseList} />
+            </div>
           </div>
         </div>
       </div>

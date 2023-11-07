@@ -103,11 +103,46 @@ function Sidebar() {
     };
 
     const ToHistoryPage = () => {
-        window.location.href = '/customer/service/history';
+        if (isCustomer) {
+            window.location.href = '/customer/service/history';
+        }
+        if (isDoctor) {
+            window.location.href = '/doctor/service/history';
+        }
     };
 
     const ToTimeTable = () => {
         window.location.href = '/doctor/time/table';
+    };
+
+    const ToAccountPage = () => {
+        if (isDoctor) {
+            window.location.href = '/doctor/account'
+        }
+        if (isCustomer) {
+            window.location.href = '/customer/account'
+        }
+        if (isOwner) {
+            window.location.href = '/owner/account'
+        }
+        if (isAdmin) {
+            window.location.href = '/admin/account'
+        }
+    };
+
+    const ToLogout = () => {
+        if (isDoctor) {
+            window.location.href = '/doctor/login';
+        }
+        if (isCustomer) {
+            window.location.href = '/login';
+        }
+        if (isOwner) {
+            window.location.href = '/owner/login';
+        }
+        if (isAdmin) {
+            window.location.href = '/admin/login';
+        }
     };
 
     return (
@@ -126,6 +161,8 @@ function Sidebar() {
                     <button onClick={ToOrderPage} className={`hover:bg-white rounded } ${isAdminActive('/admin/order')}`}>คำสั่งซื้อ</button>
                     <button onClick={ToStoragePage} className={`hover:bg-white rounded } ${isAdminActive('/admin/storage')}`}>คลัง</button>
                     <button onClick={ToUserManagement} className={`hover:bg-white rounded ${isAdminActive('/admin/user/management')}`}>จัดการผู้ใช้</button>
+                    <button onClick={ToAccountPage} className={`hover:bg-white rounded ${isAdminActive('/admin/account')}`}>บัญชีของคุณ</button>
+                    <button onClick={ToLogout} className={`hover:bg-white rounded `}>ออกจากระบบ</button>
                 </div>
             )}
             {isOwner && (
@@ -135,6 +172,8 @@ function Sidebar() {
                     <button onClick={ToStoragePage} className={`hover:bg-white rounded ${isOwnerActive('/owner/storage')}`}>คลัง</button>
                     <button onClick={ToServicePage} className={`hover:bg-white rounded ${isOwnerActive('/owner/service')}`}>บริการของเรา</button>
                     <button onClick={ToUserManagement} className={`hover:bg-white rounded ${isOwnerActive('/owner/user/management')}`}>จัดการผู้ใช้</button>
+                    <button onClick={ToAccountPage} className={`hover:bg-white rounded ${isOwnerActive('/owner/account')}`}>บัญชีของคุณ</button>
+                    <button onClick={ToLogout} className={`hover:bg-white rounded `}>ออกจากระบบ</button>
                 </div>
             )}
             {isCustomer && (
@@ -143,6 +182,8 @@ function Sidebar() {
                     <button onClick={ToRequestPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service/request')}`}>คำขอของฉัน</button>
                     <button onClick={ToRegisteredPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service')}`}>การนัดหมาย</button>
                     <button onClick={ToHistoryPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/service/history')}`}>ประวัติการรักษา</button>
+                    <button onClick={ToAccountPage} className={`hover:bg-white rounded ${isCustomerActive('/customer/account')}`}>บัญชีของคุณ</button>
+                    <button onClick={ToLogout} className={`hover:bg-white rounded `}>ออกจากระบบ</button>
                 </div>
             )}
             {isDoctor && (
@@ -151,6 +192,8 @@ function Sidebar() {
                     <button onClick={ToTimeTable} className={`hover:bg-white rounded ${isDoctorActive('/doctor/time/table')}`}>ตารางนัดหมาย</button>
                     <button onClick={ToStoragePage} className={`hover:bg-white rounded ${isDoctorActive('/doctor/storage')}`}>คลัง</button>
                     <button onClick={ToHistoryPage} className={`hover:bg-white rounded ${isDoctorActive('/doctor/service/history')}`}>ประวัติการรักษา</button>
+                    <button onClick={ToAccountPage} className={`hover:bg-white rounded ${isDoctorActive('/doctor/account')}`}>บัญชีของคุณ</button>
+                    <button onClick={ToLogout} className={`hover:bg-white rounded `}>ออกจากระบบ</button>
                 </div>
             )}
         </div>

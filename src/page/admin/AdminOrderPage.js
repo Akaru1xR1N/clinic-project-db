@@ -4,6 +4,7 @@ import Select from 'react-select';
 import Popup from 'reactjs-popup';
 import { useAdmin } from '../../components/contexts/AdminContext';
 import Swal from 'sweetalert2';
+import Pagination from '../../components/pagination/Pagination';
 
 function AdminOrderPage() {
 
@@ -24,6 +25,11 @@ function AdminOrderPage() {
   const [adminList, setAdminList] = useState([]);
 
   const [isOrderVisible, setIsOrderVisible] = useState(false);
+
+  const [filteredHistoryList, setFilteredHistoryList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   useEffect(() => {
     const isAdminLogined = localStorage.getItem('isAdminLogined');
@@ -89,6 +95,46 @@ function AdminOrderPage() {
 
   }, [ordered]);
 
+  const getFormattedDateAndItemName = (history) => {
+    const matchingAdmin = adminList.find(admin => admin.adminID === history.adminID);
+    const adminName = matchingAdmin ? matchingAdmin.name : '';
+    const adminSurname = matchingAdmin ? matchingAdmin.surname : '';
+
+    const dateTime = new Date(history.time);
+    dateTime.setUTCHours(0, 0, 0, 0); // Set the time to midnight in UTC timezone
+
+    const year = dateTime.getUTCFullYear();
+    const month = String(dateTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getUTCDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const matchingItem = itemList.find(item => item.itemID === history.itemID);
+    const itemName = matchingItem ? matchingItem.itemName : '';
+
+    return { formattedDate, adminName, adminSurname, itemName };
+  };
+
+  useEffect(() => {
+    const filteredList = historyList.filter(history => {
+      const { formattedDate, adminName, adminSurname, itemName } = getFormattedDateAndItemName(history);
+      return (
+        formattedDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        adminName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        adminSurname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.amount.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        history.totalPrice.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredHistoryList(filteredList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+  }, [historyList, adminList, searchTerm, itemList,]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredHistoryList.slice(indexOfFirstItem, indexOfLastItem);
+
   const renderOrderTableRows = (orderList) => {
     return orderList.map((order, index) => {
       const matchingItem = itemList.find(item => item.itemID === order.itemID);
@@ -136,20 +182,11 @@ function AdminOrderPage() {
 
   const renderHistoryTableRows = (historyList) => {
     return historyList.map((history, index) => {
-      const matchingAdmin = adminList.find(admin => admin.adminID === history.adminID);
-      const adminName = matchingAdmin ? matchingAdmin.name : '';
-      const adminSurname = matchingAdmin ? matchingAdmin.surname : '';
-      const matchingItem = itemList.find(item => item.itemID === history.itemID);
-      const itemName = matchingItem ? matchingItem.itemName : '';
-
-      const dateTime = new Date(history.time);
-      const year = dateTime.getFullYear();
-      const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-      const day = String(dateTime.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
+      const { formattedDate, adminName, adminSurname, itemName } = getFormattedDateAndItemName(history);
+      const uniqueKey = `${history.productID}_${index}`; // Combine productID and index to create a unique key
 
       return (
-        <tr key={history.historyID || index}>
+        <tr key={uniqueKey}>
           <td style={{ textAlign: 'center' }}>{formattedDate}</td>
           <td style={{ textAlign: 'center' }}>{adminName}</td>
           <td style={{ textAlign: 'center' }}>{adminSurname}</td>
@@ -237,6 +274,14 @@ function AdminOrderPage() {
     }
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>สั่งอุปกรณ์</h1>
@@ -311,6 +356,13 @@ function AdminOrderPage() {
         </div>
         <h2 className=' text-2xl font-normal mt-4'>ประวัติการสั่งซื้อ</h2>
         <div className=' grid pb-4 pt-4'>
+          <input
+            type="text"
+            placeholder="ค้นหาวันที่สั่ง, ชื่อผู้สั่ง, นามสกุลผู้สั่ง, ชื่ออุปกรณ์, จำนวน, หรือราคา"
+            className="rounded-lg p-2 border border-gray-300 mb-4"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
           <table className=' table-auto'>
             <thead style={{
               backgroundColor: '#FFD7B2',
@@ -326,9 +378,16 @@ function AdminOrderPage() {
               </tr>
             </thead>
             <tbody>
-              {renderHistoryTableRows(historyList)}
+              {renderHistoryTableRows(currentItems)}
             </tbody>
           </table>
+          <div className="pagination flex justify-center mt-4">
+            <Pagination
+              totalItems={filteredHistoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+              itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+              onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+            />
+          </div>
         </div>
       </div>
     </div>

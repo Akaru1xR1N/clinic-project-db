@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 import { useAdmin } from '../../components/contexts/AdminContext';
+import Pagination from '../../components/pagination/Pagination';
 
 function AdminServicePage() {
 
@@ -20,6 +21,16 @@ function AdminServicePage() {
   const [deleted, setDeleted] = useState(false);
   const [opened, setOpened] = useState(false);
   const [closed, setClosed] = useState(false);
+
+  const [filteredInusedCategoryList, setFilteredInusedCategoryList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  const [filteredUnusedCategoryList, setFilteredUnusedCategoryList] = useState([]);
+  const [searchTermUnused, setSearchTermUnused] = useState('');
+  const [currentPageUnused, setCurrentPageUnused] = useState(1);
+  const [itemsPerPageUnused] = useState(5);
 
   const ToAddService = () => {
     window.location.href = '/admin/add/service';
@@ -58,6 +69,33 @@ function AdminServicePage() {
     fetchCategoryInused();
     fetchCategoryUnused();
   }, [deleted, opened, closed]);
+
+  useEffect(() => {
+    const filteredInusedList = InusedCategory.filter(inUsed => {
+      return (
+        inUsed.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredInusedCategoryList(filteredInusedList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+    const filteredUnusedList = UnusedCategory.filter(unUsed => {
+      return (
+        unUsed.categoryName.toLowerCase().includes(searchTermUnused.toLowerCase())
+      );
+    });
+    setFilteredUnusedCategoryList(filteredUnusedList);
+    setCurrentPageUnused(1); // Reset to the first page when the search term changes
+
+  }, [InusedCategory, searchTerm, UnusedCategory, searchTermUnused]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredInusedCategoryList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const indexOfLastItemUnused = currentPageUnused * itemsPerPageUnused;
+  const indexOfFirstItemUnused = indexOfLastItemUnused - itemsPerPageUnused;
+  const currentItemsUnused = filteredUnusedCategoryList.slice(indexOfFirstItemUnused, indexOfLastItemUnused);
 
   const toggleTableInusedVisibility = () => {
     setIsTableInusedVisible(!isTableInusedVisible);
@@ -256,6 +294,22 @@ function AdminServicePage() {
     window.location.href = '/admin/edit/service/' + typeID;
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchUnused = event => {
+    setSearchTermUnused(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePageChangeUnused = pageNumberUnused => {
+    setCurrentPageUnused(pageNumberUnused);
+  };
+
   return (
     <div>
       <h1 className=' text-4xl font-normal text-center p-7'>จัดการบริการ</h1>
@@ -287,6 +341,13 @@ function AdminServicePage() {
         </div>
         {isTableInusedVisible && (
           <div className=' grid pb-4'>
+            <input
+              type="text"
+              placeholder="ค้นหาตามชื่อ"
+              className="rounded-lg p-2 border border-gray-300 mb-4"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
             <table className=' table-auto'>
               <thead style={{
                 backgroundColor: '#FFD7B2',
@@ -298,9 +359,16 @@ function AdminServicePage() {
                 </tr>
               </thead>
               <tbody>
-                {renderInusedTableRows(InusedCategory)}
+                {renderInusedTableRows(currentItems)}
               </tbody>
             </table>
+            <div className="pagination flex justify-center mt-4">
+              <Pagination
+                totalItems={filteredInusedCategoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+                onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+              />
+            </div>
           </div>
         )}
       </div>
@@ -319,6 +387,13 @@ function AdminServicePage() {
         </div>
         {isTableUnusedVisible && (
           <div className=' grid mb-4'>
+            <input
+              type="text"
+              placeholder="ค้นหาตามชื่อ"
+              className="rounded-lg p-2 border border-gray-300 mb-4"
+              value={searchTermUnused}
+              onChange={handleSearchUnused}
+            />
             <table className=' table-auto'>
               <thead style={{
                 backgroundColor: '#FFD7B2',
@@ -330,9 +405,16 @@ function AdminServicePage() {
                 </tr>
               </thead>
               <tbody>
-                {renderUnusedTableRows(UnusedCategory)}
+                {renderUnusedTableRows(currentItemsUnused)}
               </tbody>
             </table>
+            <div className="pagination flex justify-center mt-4">
+              <Pagination
+                totalItems={filteredUnusedCategoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+                itemsPerPage={itemsPerPageUnused} // จำนวนรายการต่อหน้า
+                onPageChange={handlePageChangeUnused} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+              />
+            </div>
           </div>
         )}
       </div>

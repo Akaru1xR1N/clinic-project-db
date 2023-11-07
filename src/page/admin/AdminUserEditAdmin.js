@@ -12,13 +12,10 @@ function AdminUserEditAdmin() {
     const [NationalID, setNationalID] = useState("");
     const [Email, setEmail] = useState("");
     const [clinicInfo, setClinicInfo] = useState('');
-    const [clinicName, setClinicName] = useState('');
     const [clinicID, setClinicID] = useState("");
     const [Data, setData] = useState('');
 
     const [deleted, setDeleted] = useState(false);
-
-    const [clinicList, setClinicList] = useState([]);
 
     useEffect(() => {
         const isAdminLogined = localStorage.getItem('isAdminLogined');
@@ -45,32 +42,7 @@ function AdminUserEditAdmin() {
             }
         }
 
-        const fetchClinicData = async () => {
-            try {
-                const response = await axios.get(process.env.REACT_APP_API_URL + 'clinic/inused');
-                const responseData = response.data;
-                if (!responseData.error) {
-                    const clinics = responseData.data;
-                    const options = responseData.data.map(clinic => ({
-                        value: clinic.clinicID,
-                        label: clinic.name,
-                        clinicID: clinic.clinicID,
-                        clinicName: clinic.name
-                    }));
-
-                    const matchingClinic = clinics.find(clinic => clinic.clinicID === clinicInfo);
-                    if (matchingClinic) {
-                        setClinicName(matchingClinic.name);
-                    }
-                    setClinicList(options);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchData();
-        fetchClinicData();
     }, [adminID, clinicInfo, deleted]);
 
     const ToUserManagement = () => {

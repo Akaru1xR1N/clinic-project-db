@@ -9,6 +9,7 @@ import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import { useCustomer } from '../../components/contexts/AdminContext';
+import Pagination from '../../components/pagination/Pagination';
 
 function CustomerHomePage() {
 
@@ -29,6 +30,11 @@ function CustomerHomePage() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('08:30');
+
+  const [filteredInusedCategoryList, setFilteredInusedCategoryList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -77,6 +83,21 @@ function CustomerHomePage() {
     fetchCategoryInused();
     fetchClinicData();
   }, []);
+
+  useEffect(() => {
+    const filteredInusedList = InusedCategory.filter(inUsed => {
+      return (
+        inUsed.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredInusedCategoryList(filteredInusedList);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+
+  }, [InusedCategory, searchTerm]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredInusedCategoryList.slice(indexOfFirstItem, indexOfLastItem);
 
   const toggleInfomationVisibility = (categoryID) => {
     setIsInformaionVisible(true);
@@ -167,6 +188,13 @@ function CustomerHomePage() {
     }
   };
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div>
@@ -176,6 +204,13 @@ function CustomerHomePage() {
       </div>
       <div>
         <div className=' grid pb-4'>
+          <input
+            type="text"
+            placeholder="ค้นหาตามชื่อ"
+            className="rounded-lg p-2 border border-gray-300 mb-4"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
           <table className=' table-auto'>
             <thead style={{
               backgroundColor: '#FFB2F3',
@@ -187,9 +222,16 @@ function CustomerHomePage() {
               </tr>
             </thead>
             <tbody>
-              {renderInusedTableRows(InusedCategory)}
+              {renderInusedTableRows(currentItems)}
             </tbody>
           </table>
+          <div className="pagination flex justify-center mt-4">
+            <Pagination
+              totalItems={filteredInusedCategoryList.length} // จำนวนรายการทั้งหมดที่ต้องการแสดงใน pagination
+              itemsPerPage={itemsPerPage} // จำนวนรายการต่อหน้า
+              onPageChange={handlePageChange} // ฟังก์ชันที่จะเรียกเมื่อเปลี่ยนหน้า
+            />
+          </div>
         </div>
       </div>
       <div className=' pb-4'>
